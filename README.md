@@ -1,41 +1,71 @@
-# Voltora: Autonomous Multi-Dimensional Document Auditor
+# Voltora: Multi-Dimensional Document Auditor
 
-> **An autonomous document auditor that reverses the typical AI interaction paradigm.**  
-> Instead of a passive chat interface requiring users to guess what questions to ask, **Voltora autonomously ingests documents, evaluates mathematical integrity, cross-page semantic contradictions, chronological sequences, and unit scale consistency, and outputs an actionable, coordinate-grounded diagnostics dashboard.**
-
----
-
-## 🏆 Key Architectural Pillars (The Top 1% Moat)
-
-1. **Neuro-Symbolic Hybrid Architecture**:
-   - **Deterministic Engines**: Tables, arithmetic additions, and percentage distributions are audited in pure Python with mathematical precision (no LLM hallucination).
-   - **Semantic NLI Engine**: Cross-page claims are clustered via TF-IDF / sentence vector embeddings to form candidate pairs, then judged for mutual exclusivity or metric conflicts.
-2. **Dual-Anchor Coordinate Highlighting**:
-   - Normalized coordinate vectors (`[ymin, xmin, ymax, xmax] \in [0.0, 1.0]`) mapped to pixel-perfect SVG canvas overlays.
-   - For contradictions spanning different pages (e.g., Page 1 vs. Page 3), linked dual-anchor jumpers allow seamless 1-click comparison.
-3. **Evidence Strength Heatmap (X-Ray Mode)**:
-   - Dynamic evidence overlay grading document pages (Crimson = active discrepancies, Amber = warnings, Emerald = verified consistent claims).
-4. **Issue-Centric Micro-Chat**:
-   - Replaces the generic document chat box with focused, context-grounded audit resolution drawers on each card with pre-built materiality risk and SEC filing prompts.
-5. **Built-in Empirical Evaluation Suite**:
-   - Ground-truth benchmark suite measuring Precision, Recall, F1-Score, and Latency per page across multi-page corporate filings.
+> **An automated document audit application designed to assist reviewers in identifying numerical discrepancies, cross-statement contradictions, timeline inversions, and scale mismatches.**  
+> Voltora automatically ingests PDF documents, evaluates arithmetic integrity, cross-page narrative consistency, chronological milestone sequences, and unit scale consistency, outputting a coordinate-grounded diagnostics dashboard.
 
 ---
 
-## 📊 Live Benchmark Performance
+## 🔍 Core Architecture
 
-Verified against multi-page financial filings with injected errors and clean baseline controls:
+1. **Deterministic & Heuristic Hybrid Pipeline**:
+   - **Deterministic Checks**: Table column cross-footing, in-text percentage rates, distribution totals, and unit scale conversions are verified mathematically with explicit step-by-step derivation explanations.
+   - **Heuristic Checks**: Cross-page narrative claims are clustered via TF-IDF candidate pairing and evaluated for mutual exclusivity, metric divergence, and polarity mismatches within comparable entities and time periods.
+   - **Review Flags**: Ambiguous pairs or unverified contexts are classified as `needs_review` or omitted, rather than presented as confirmed errors.
+2. **Dual-Anchor Coordinate Grounding**:
+   - Normalized coordinate vectors (`[x0, y0, x1, y1] \in [0.0, 1.0]`) mapped to SVG overlays on rendered PDF pages.
+   - For contradictions spanning different pages, linked dual-anchor jumpers allow 1-click comparison between source and conflicting sections.
+3. **Evidence Heatmap Overlay**:
+   - Page-level evidence indicator highlighting pages with detected discrepancies (Crimson = critical issues, Amber = warnings, Green = no issues detected within evaluated rules).
+   - *Note:* A green page indicates that no issues were detected by the evaluated automated rules; it does not constitute a certification of complete document accuracy.
+4. **Context-Grounded Issue Review & Assistant**:
+   - Provides focused evidence summaries and derivation breakdowns for each finding.
+   - Qualified recommendations for reconciliation without claiming legal, regulatory, or certified audit authority.
+   - Clean fallback handling when external LLM credentials are not configured or encounter provider errors.
 
-| Audit Dimension | Ground Truth | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Precision | Recall | F1-Score |
+---
+
+## 📊 Benchmark Suite & Empirical Results
+
+Voltora includes an automated evaluation suite (`eval/run_benchmark.py`) that evaluates findings against an annotated ground-truth dataset (`eval/ground_truth.py`).
+
+### Scoring Methodology
+- **Strict 1-to-1 Matching**: A detected issue only matches an expected issue if its category matches, primary (and secondary, if cross-page) page matches, and key evidence tokens are present in the finding.
+- **Micro & Macro Metrics**: Reports precision, recall, and F1 per category, along with micro-averages (pooled counts) and macro-averages (unweighted category mean).
+- **Clean Document Testing**: Tracks false-positive detections on clean baseline controls (0 expected issues).
+- **Skipped Tracking**: Explicitly reports any missing or unreadable test files.
+
+### Current Evaluation Results (Synthetic Test Corpus)
+
+Evaluated across **4 test documents (10 pages total)**:
+- `acme_fy24_annual_report.pdf` (4 pages, 8 injected multi-dimensional issues)
+- `clean_financial_statement.pdf` (3 pages, clean baseline control)
+- `vertex_energy_audit.pdf` (2 pages, 2 injected issues + clean tables)
+- `nova_clean_quarterly.pdf` (1 page, clean baseline control)
+
+| Audit Category | Ground Truth | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Precision | Recall | F1-Score |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Mathematical Discrepancy** | 2 | 2 | 0 | 0 | **100.0%** | **100.0%** | **100.0%** |
-| **Semantic Contradiction** | 3 | 3 | 0 | 0 | **100.0%** | **100.0%** | **100.0%** |
-| **Temporal Sequence Inversion**| 2 | 2 | 0 | 0 | **100.0%** | **100.0%** | **100.0%** |
-| **Unit & Scale Mismatch** | 1 | 1 | 0 | 0 | **100.0%** | **100.0%** | **100.0%** |
-| **OVERALL MACRO BENCHMARK** | **8** | **8** | **0** | **0** | **100.0%** | **100.0%** | **100.0%** |
+| **Math Discrepancy** | 3 | 3 | 0 | 0 | 100.0% | 100.0% | 100.0% |
+| **Semantic Contradiction** | 3 | 3 | 0 | 0 | 100.0% | 100.0% | 100.0% |
+| **Temporal Inversion** | 3 | 3 | 0 | 0 | 100.0% | 100.0% | 100.0% |
+| **Unit Mismatch** | 1 | 1 | 0 | 0 | 100.0% | 100.0% | 100.0% |
+| **MICRO AVERAGE** | **10** | **10** | **0** | **0** | **100.0%** | **100.0%** | **100.0%** |
+| **MACRO AVERAGE** | **10** | **-** | **-** | **-** | **100.0%** | **100.0%** | **100.0%** |
 
-- **Average Latency / Page**: `74.6 ms`
-- **Clean Document False Positive Rate**: `0.0%` (0 false alarms on clean audited statement)
+- **Clean Document False-Alarm Count**: `0` across 2 clean control documents.
+- **Skipped Documents**: `0`
+- **Average Processing Throughput**: `~67 ms` per page.
+
+> **Evaluation Limitations**:  
+> Benchmark metrics are measured on a programmatically generated synthetic corpus designed for unit and integration testing. These results demonstrate rule verification correctness on modeled patterns, but do not represent measured accuracy on heterogeneous, uncurated real-world filings or complex accounting edge cases.
+
+---
+
+## 🔒 Security & Deployment Architecture
+
+- **Single-User / Local Session Architecture**:
+  Voltora's backend utilizes an in-memory document store (`DocumentStore`) scoped to the active application runtime. Document IDs are generated via random UUIDs, but the application does not implement authentication, role-based access control, or multi-tenant workspace isolation.
+- **Upload Hardening**:
+  Uploads are validated for `.pdf` file extension, standard `%PDF-` file magic bytes, an upload size limit of 25MB, and a maximum page limit of 100 pages. Malformed or corrupted PDFs return structured 400 Bad Request responses.
 
 ---
 
@@ -43,60 +73,52 @@ Verified against multi-page financial filings with injected errors and clean bas
 
 ```
 ├── backend/
-│   ├── main.py                    # FastAPI server (REST, SSE streaming, page renderer, micro-chat)
-│   ├── models/                    # Pydantic schemas (BoundingBox, SourceAnchor, AuditIssue, AuditReport)
+│   ├── main.py                    # FastAPI server & validated upload endpoints
+│   ├── models/                    # Pydantic schemas (AuditIssue, SourceAnchor, AuditReport)
 │   ├── parsers/                   # PyMuPDF coordinate parser & table extractor
 │   ├── auditors/
 │   │   ├── base.py                # Base auditor interface
-│   │   ├── math_auditor.py        # Table row/column cross-footing & percentage distribution checks
-│   │   ├── temporal_auditor.py    # Chronological DAG & milestone sequence validation
-│   │   ├── unit_auditor.py        # Order-of-magnitude scale & currency divergence auditor
-│   │   ├── semantic_auditor.py    # TF-IDF candidate pairing & contradiction judgment
-│   │   └── orchestrator.py        # Pipeline orchestrator, health score, and page evidence grading
-│   └── services/                  # Document store & contextual chat engine
-├── sample_docs/                   # Programmatic test PDF generator (Acme FY24 & Clean Statement)
-├── eval/                          # Ground-truth test dataset & automated benchmark runner
+│   │   ├── math_auditor.py        # Table cross-footing & percentage distribution checks
+│   │   ├── temporal_auditor.py    # Chronological sequence & milestone validation
+│   │   ├── unit_auditor.py        # Scale factor & currency consistency auditor
+│   │   ├── semantic_auditor.py    # Evidence-grounded claim extraction & conflict judgment
+│   │   └── orchestrator.py        # Audit orchestrator, health score, and page evidence grading
+│   └── services/                  # Document session store & grounded chat service
+├── sample_docs/                   # Programmatic test PDF generators
+├── eval/                          # Ground-truth dataset & strict 1-to-1 benchmark runner
+├── tests/                         # Unit & integration test suite
 └── frontend/                      # React + TypeScript + Vite modern web UI
 ```
 
 ---
 
-## 🚀 One-Click Launch (Recommended)
+## 🚀 Getting Started
 
-Run the automated launcher from the project root:
-
+### 1. Launch Backend & Frontend
+Using the automated launcher:
 ```bash
 ./run.sh
 ```
 
-This single command:
-1. Verifies Python 3 and Node.js environments.
-2. Automatically provisions the virtual environment (`.venv`) and installs dependencies.
-3. Installs frontend dependencies in `frontend/`.
-4. Gracefully frees ports `8000` and `5173`.
-5. Starts the FastAPI backend and Vite frontend concurrently.
-6. Opens the app in your browser at **[http://localhost:5173](http://localhost:5173)**.
-7. Gracefully stops all services when you press `Ctrl+C`.
-
----
-
-## 🛠️ Manual Launch
-
-### 1. Backend Server
+Or manually:
 ```bash
+# Terminal 1: Backend
 source .venv/bin/activate
 uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
-```
 
-### 2. Frontend Web Client
-```bash
+# Terminal 2: Frontend
 cd frontend
 npm run dev
 ```
 Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
-### 3. Run Benchmark Suite
+### 2. Run Benchmark Suite
 ```bash
 python -m eval.run_benchmark
 ```
-Outputs a rich terminal table with precision, recall, F1, and latency metrics.
+Runs the strict 1-to-1 evaluation suite and updates `eval/benchmark_results.json`.
+
+### 3. Run Test Suite
+```bash
+python -m unittest discover tests
+```

@@ -14,6 +14,8 @@ export interface SourceAnchor {
 
 export type IssueSeverity = 'critical' | 'warning' | 'info' | 'verified';
 export type IssueCategory = 'math_discrepancy' | 'semantic_contradiction' | 'temporal_inversion' | 'unit_mismatch' | 'factual_drift';
+export type CheckType = 'deterministic' | 'heuristic';
+export type IssueStatus = 'confirmed' | 'needs_review';
 
 export interface AuditIssue {
   id: string;
@@ -22,6 +24,9 @@ export interface AuditIssue {
   category: IssueCategory | string;
   severity: IssueSeverity;
   confidence: number;
+  check_type?: CheckType;
+  status?: IssueStatus;
+  explanation?: string;
   primary_anchor: SourceAnchor;
   secondary_anchor?: SourceAnchor;
   expected_value?: string;
@@ -45,6 +50,10 @@ export interface AuditSummary {
   critical_count: number;
   warning_count: number;
   info_count: number;
+  deterministic_count?: number;
+  heuristic_count?: number;
+  needs_review_count?: number;
+  passed_checks_count?: number;
   verified_claims_count: number;
   tables_analyzed: number;
   pages_analyzed: number;
@@ -64,13 +73,28 @@ export interface AuditReport {
 export interface BenchmarkMetrics {
   total_documents?: number;
   total_pages?: number;
-  execution_time_seconds?: number;
-  overall?: {
-    precision?: number;
-    recall?: number;
-    f1_score?: number;
-  };
-  by_category?: Record<string, { precision?: number; recall?: number; f1_score?: number }>;
+  clean_documents_tested?: number;
+  clean_document_false_positives?: number;
+  skipped_documents?: Array<{ doc_id: string; file_path: string; reason: string }>;
+  avg_latency_per_page_ms?: number;
+  overall_precision?: number;
+  overall_recall?: number;
+  overall_f1?: number;
+  micro_metrics?: { precision?: number; recall?: number; f1?: number };
+  macro_metrics?: { precision?: number; recall?: number; f1?: number };
+  categories?: Record<string, { ground_truth?: number; tp?: number; fp?: number; fn?: number; precision?: number; recall?: number; f1?: number }>;
+  documents?: Array<{
+    doc_id: string;
+    file_path?: string;
+    is_clean?: boolean;
+    pages?: number;
+    duration_ms?: number;
+    health_score?: number;
+    grade?: string;
+    detected_issues_count?: number;
+    ground_truth_count?: number;
+    matched_count?: number;
+  }>;
 }
 
 export interface ChatMessage {

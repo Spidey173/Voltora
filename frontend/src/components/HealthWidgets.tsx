@@ -6,13 +6,22 @@ interface HealthWidgetsProps {
 }
 
 export const HealthWidgets: React.FC<HealthWidgetsProps> = ({ summary }) => {
-  const getHealthMeta = (score: number) => {
+  const getHealthMeta = (score: number, totalIssues: number) => {
+    if (totalIssues === 0) {
+      return {
+        color: '#10B981',
+        bg: 'rgba(16, 185, 129, 0.12)',
+        border: 'rgba(16, 185, 129, 0.25)',
+        status: 'Passes Evaluated Rules',
+        desc: 'No discrepancies detected within evaluated rules. Human review recommended.',
+      };
+    }
     if (score >= 80) {
       return {
         color: '#10B981',
         bg: 'rgba(16, 185, 129, 0.12)',
         border: 'rgba(16, 185, 129, 0.25)',
-        status: 'Good Health',
+        status: 'Minor Warnings',
         desc: 'Few contradictions detected; review highlighted notes.',
       };
     }
@@ -30,11 +39,13 @@ export const HealthWidgets: React.FC<HealthWidgetsProps> = ({ summary }) => {
       bg: 'rgba(255, 56, 56, 0.14)',
       border: 'rgba(255, 56, 56, 0.30)',
       status: 'High Discrepancies',
-      desc: 'Multiple critical contradictions require immediate correction.',
+      desc: 'Multiple critical contradictions require review and reconciliation.',
     };
   };
 
-  const meta = getHealthMeta(summary.health_score);
+  const meta = getHealthMeta(summary.health_score, summary.total_issues);
+  const detCount = summary.deterministic_count ?? 0;
+  const heurCount = summary.heuristic_count ?? 0;
 
   return (
     <div
@@ -49,7 +60,7 @@ export const HealthWidgets: React.FC<HealthWidgetsProps> = ({ summary }) => {
       <div className="clean-panel" style={{ padding: '18px 20px', backgroundColor: '#140E11' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
           <span style={{ fontSize: '12px', color: '#BCA3A7', fontWeight: 500 }}>
-            Document Health Score
+            Document Integrity Score
           </span>
           <span
             style={{
@@ -85,7 +96,7 @@ export const HealthWidgets: React.FC<HealthWidgetsProps> = ({ summary }) => {
       <div className="clean-panel" style={{ padding: '18px 20px', backgroundColor: '#140E11' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
           <span style={{ fontSize: '12px', color: '#BCA3A7', fontWeight: 500 }}>
-            Detected Issues
+            Detected Findings
           </span>
           <span style={{ fontSize: '12px', color: summary.total_issues > 0 ? '#FF5A1F' : '#10B981', fontWeight: 600 }}>
             {summary.total_issues} issues
@@ -140,34 +151,35 @@ export const HealthWidgets: React.FC<HealthWidgetsProps> = ({ summary }) => {
             {summary.warning_count} Warning
           </span>
           <span style={{ color: '#10B981', fontWeight: 500 }}>
-            {summary.verified_claims_count} Verified
+            {summary.passed_checks_count ?? summary.verified_claims_count} Checked
           </span>
         </div>
       </div>
 
-      {/* ═══ 3. EVIDENCE GROUNDING ═══ */}
+      {/* ═══ 3. CHECK METHODOLOGIES ═══ */}
       <div className="clean-panel" style={{ padding: '18px 20px', backgroundColor: '#140E11' }}>
         <div style={{ fontSize: '12px', color: '#BCA3A7', fontWeight: 500, marginBottom: '8px' }}>
-          Evidence Strength
+          Check Methodology
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
           <span
             className="font-heading"
-            style={{ fontSize: '32px', fontWeight: 800, color: '#FFF1EE', lineHeight: 1 }}
+            style={{ fontSize: '24px', fontWeight: 800, color: '#FFF1EE', lineHeight: 1 }}
           >
-            96.8%
+            {detCount} Det / {heurCount} Heur
           </span>
-          <span style={{ fontSize: '12px', color: '#10B981', fontWeight: 500 }}>grounded</span>
         </div>
         <div style={{ marginTop: '8px', fontSize: '12px', color: '#BCA3A7' }}>
-          Each finding is tied to exact PDF coordinate highlights.
+          {summary.total_issues === 0
+            ? 'All evaluated tables and sequences reconciled.'
+            : 'Deterministic arithmetic + semantic NLI pairing.'}
         </div>
       </div>
 
       {/* ═══ 4. AUDIT TELEMETRY ═══ */}
       <div className="clean-panel" style={{ padding: '18px 20px', backgroundColor: '#140E11' }}>
         <div style={{ fontSize: '12px', color: '#BCA3A7', fontWeight: 500, marginBottom: '8px' }}>
-          Audit Coverage
+          Audit Scope
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
           <span
@@ -176,7 +188,7 @@ export const HealthWidgets: React.FC<HealthWidgetsProps> = ({ summary }) => {
           >
             {summary.tables_analyzed}
           </span>
-          <span style={{ fontSize: '13px', color: '#BCA3A7' }}>tables verified</span>
+          <span style={{ fontSize: '13px', color: '#BCA3A7' }}>tables analyzed</span>
         </div>
         <div style={{ marginTop: '8px', fontSize: '12px', color: '#806B70' }}>
           {summary.pages_analyzed} pages audited in {(summary.audit_duration_ms / 1000).toFixed(2)}s

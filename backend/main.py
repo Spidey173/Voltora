@@ -1,11 +1,14 @@
 import io
 import os
+import re
 import json
 import uuid
 import asyncio
-from fastapi import FastAPI, UploadFile, File, HTTPException, Query
+import logging
+from fastapi import FastAPI, UploadFile, File, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
+import pymupdf as fitz
 
 from backend.models.schemas import (
     AuditReport,
@@ -16,6 +19,12 @@ from backend.models.schemas import (
 )
 from backend.services.doc_service import doc_store
 from backend.services.chat_service import ChatService
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+)
+logger = logging.getLogger("voltora.api")
 
 app = FastAPI(
     title="Voltora - Autonomous Multi-Dimensional Document Auditor",
@@ -33,35 +42,89 @@ app.add_middleware(
 )
 
 chat_service = ChatService()
+MAX_UPLOAD_SIZE = 25 * 1024 * 1024  # 25 MB
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "online", "service": "Voltora Auditor Engine", "version": "1.0.0"}
+    return {
+        "status": "online",
+        "service": "Voltora Auditor Engine",
+        "version": "1.0.0",
+        "storage_mode": "in_memory_local_session"
+    }
 
 @app.post("/api/upload", response_model=AuditReport)
 async def upload_document(file: UploadFile = File(...)):
-    if not file.filename.lower().endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Only PDF files are supported.")
-    
-    doc_id = f"doc_{uuid.uuid4().hex[:8]}"
+    # 1. Filename validation
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only PDF documents (.pdf) are supported."
+        )
+
+    # 2. File size validation
     content = await file.read()
-    
+    if len(content) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The uploaded file is empty."
+        )
+    if len(content) > MAX_UPLOAD_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail=f"File size exceeds maximum permitted limit of {MAX_UPLOAD_SIZE // (1024 * 1024)}MB."
+        )
+
+    # 3. PDF Header / Magic Bytes Validation
+    if b"%PDF-" not in content[:1024]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The file header is invalid. The uploaded file does not appear to be a standard PDF document."
+        )
+
+    doc_id = f"doc_{uuid.uuid4().hex[:8]}"
+    clean_title = os.path.basename(file.filename)
+
+    # 4. Parsing & Auditing with Granular Error Recovery
     try:
-        report = doc_store.add_document(content, doc_id=doc_id, title=file.filename)
+        report = doc_store.add_document(content, doc_id=doc_id, title=clean_title)
         return report
+    except ValueError as ve:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(ve)
+        )
+    except (fitz.FileDataError, fitz.EmptyFileError) as pfe:
+        logger.warning("Corrupt PDF upload rejected for %s: %s", clean_title, pfe)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The uploaded PDF file is malformed, corrupted, or password-protected and could not be read."
+        )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to process document: {str(e)}")
+        logger.error("Unexpected error processing document %s: %s", clean_title, e, exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while processing the document: {str(e)}"
+        )
 
 @app.get("/api/sample/{sample_name}", response_model=AuditReport)
 def load_sample(sample_name: str):
+    # Sanitize sample name against path traversal
+    if not re.match(r'^[a-zA-Z0-9_\-]+$', sample_name):
+        raise HTTPException(status_code=400, detail="Invalid sample name parameter.")
+
     report = doc_store.get_report(sample_name)
     if not report:
-        # Check if file exists in sample_docs
         file_path = f"sample_docs/{sample_name}.pdf"
         if os.path.exists(file_path):
-            with open(file_path, "rb") as f:
-                report = doc_store.add_document(f.read(), doc_id=sample_name, title=sample_name.replace("_", " ").title())
+            try:
+                with open(file_path, "rb") as f:
+                    content = f.read()
+                report = doc_store.add_document(content, doc_id=sample_name, title=sample_name.replace("_", " ").title())
                 return report
+            except Exception as e:
+                logger.error("Failed to load sample document %s: %s", sample_name, e)
+                raise HTTPException(status_code=500, detail=f"Failed to load sample document: {str(e)}")
         raise HTTPException(status_code=404, detail=f"Sample document '{sample_name}' not found.")
     return report
 
@@ -78,7 +141,6 @@ def get_page_image(doc_id: str, page_num: int, dpi: int = Query(150, ge=72, le=3
     if not png_bytes:
         raise HTTPException(status_code=404, detail=f"Page {page_num} not found for document {doc_id}.")
     return StreamingResponse(io.BytesIO(png_bytes), media_type="image/png")
-
 
 @app.post("/api/docs/{doc_id}/ask", response_model=AskIssueResponse)
 def ask_about_issue(doc_id: str, req: AskIssueRequest):
@@ -98,8 +160,12 @@ def chat_document(doc_id: str, req: ChatDocRequest):
 def get_benchmark_results():
     benchmark_path = "eval/benchmark_results.json"
     if os.path.exists(benchmark_path):
-        with open(benchmark_path, "r") as f:
-            return json.load(f)
+        try:
+            with open(benchmark_path, "r") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error("Failed to read benchmark_results.json: %s", e)
+            return {"status": "Error loading benchmark results."}
     return {"status": "Benchmark not yet run. Run 'python -m eval.run_benchmark' first."}
 
 @app.get("/api/audit-stream/{doc_id}")
@@ -110,16 +176,12 @@ async def stream_audit_progress(doc_id: str):
         raise HTTPException(status_code=404, detail="Document not found.")
 
     async def event_generator():
-        # Step 1: Ingestion
         yield f"data: {json.dumps({'stage': 'ingestion', 'progress': 25, 'message': 'PyMuPDF parsed text blocks and tables'})}\n\n"
-        await asyncio.sleep(0.15)
-        # Step 2: Deterministic math
+        await asyncio.sleep(0.1)
         yield f"data: {json.dumps({'stage': 'math_audit', 'progress': 50, 'message': 'Cross-footing verified table row and column totals'})}\n\n"
-        await asyncio.sleep(0.15)
-        # Step 3: Semantic NLI
+        await asyncio.sleep(0.1)
         yield f"data: {json.dumps({'stage': 'semantic_audit', 'progress': 80, 'message': 'TF-IDF candidate pairing and contradiction judgment evaluated'})}\n\n"
-        await asyncio.sleep(0.15)
-        # Step 4: Complete
+        await asyncio.sleep(0.1)
         yield f"data: {json.dumps({'stage': 'completed', 'progress': 100, 'report': report.model_dump()})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")

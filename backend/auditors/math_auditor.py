@@ -3,7 +3,9 @@ import uuid
 from typing import List, Optional, Tuple
 from backend.auditors.base import BaseAuditor
 from backend.parsers.pdf_parser import ParsedDocument, PDFParser
-from backend.models.schemas import AuditIssue, Severity, IssueCategory, SourceAnchor, BoundingBox
+from backend.models.schemas import (
+    AuditIssue, Severity, IssueCategory, SourceAnchor, BoundingBox, CheckType, IssueStatus
+)
 
 def clean_numeric_str(val: str) -> Optional[float]:
     """Parses numeric strings like '$1,250.50', '(45.2)', '14%', '12.5M' to float."""
@@ -113,6 +115,9 @@ class MathAuditor(BaseAuditor):
                                         category=IssueCategory.MATH,
                                         severity=Severity.CRITICAL if delta > 1.0 else Severity.WARNING,
                                         confidence=0.99,
+                                        check_type=CheckType.DETERMINISTIC,
+                                        status=IssueStatus.CONFIRMED,
+                                        explanation=f"Deterministic cross-footing: summed {len(col_values)} numeric rows ({' + '.join(f'{v:,.2f}' for v in col_values)}) = {expected_sum:,.2f}; stated total is {stated_total:,.2f}; variance = {delta:,.2f}.",
                                         primary_anchor=SourceAnchor(
                                             page=table.page,
                                             bbox=bbox,
@@ -144,7 +149,9 @@ class MathAuditor(BaseAuditor):
             re.IGNORECASE
         )
 
-        for span in parsed.spans:
+        seen_dist_spans = set()
+
+        for s_idx, span in enumerate(parsed.spans):
             text = span.text
             
             # Check growth calculation
@@ -164,6 +171,9 @@ class MathAuditor(BaseAuditor):
                             category=IssueCategory.MATH,
                             severity=Severity.CRITICAL if delta_pct > 3.0 else Severity.WARNING,
                             confidence=0.98,
+                            check_type=CheckType.DETERMINISTIC,
+                            status=IssueStatus.CONFIRMED,
+                            explanation=f"Deterministic rate calculation: (({val_to} - {val_from}) / {val_from}) * 100% = {calculated_pct:.2f}%; stated growth = {stated_pct:.2f}%; variance = {delta_pct:.2f} percentage points.",
                             primary_anchor=SourceAnchor(
                                 page=span.page,
                                 bbox=BoundingBox(x0=span.bbox[0], y0=span.bbox[1], x1=span.bbox[2], y1=span.bbox[3]),
@@ -183,6 +193,7 @@ class MathAuditor(BaseAuditor):
                 p3 = float(match.group(3))
                 total_pct = p1 + p2 + p3
                 if abs(total_pct - 100.0) > 0.5:
+                    seen_dist_spans.add((span.page, span.text[:50]))
                     issues.append(AuditIssue(
                         id=f"math-dist-{span.page}-{uuid.uuid4().hex[:6]}",
                         title=f"Percentage Breakdown Does Not Equal 100%",
@@ -190,6 +201,9 @@ class MathAuditor(BaseAuditor):
                         category=IssueCategory.MATH,
                         severity=Severity.WARNING,
                         confidence=0.99,
+                        check_type=CheckType.DETERMINISTIC,
+                        status=IssueStatus.CONFIRMED,
+                        explanation=f"Deterministic addition check: summed components ({p1:.1f}% + {p2:.1f}% + {p3:.1f}%) = {total_pct:.1f}%; expected 100.0%; variance = {abs(total_pct - 100.0):.1f}%.",
                         primary_anchor=SourceAnchor(
                             page=span.page,
                             bbox=BoundingBox(x0=span.bbox[0], y0=span.bbox[1], x1=span.bbox[2], y1=span.bbox[3]),
@@ -204,12 +218,13 @@ class MathAuditor(BaseAuditor):
 
             # Check percentage distribution in bullet lists or breakdown text
             text_lower = text.lower()
-            if any(k in text_lower for k in ["distributed as follows", "revenue contribution", "segment breakdown", "percentage distribution", "allocation"]):
+            if (span.page, span.text[:50]) not in seen_dist_spans and any(k in text_lower for k in ["distributed as follows", "revenue contribution", "segment breakdown", "percentage distribution", "allocation"]):
                 pct_matches = [float(p) for p in re.findall(r'([0-9]+(?:\.[0-9]+)?)\s*%', text)]
                 components = [p for p in pct_matches if abs(p - 100.0) > 0.01]
                 if len(components) >= 2:
                     total_pct = sum(components)
                     if abs(total_pct - 100.0) > 0.5:
+                        seen_dist_spans.add((span.page, span.text[:50]))
                         delta_pct = abs(total_pct - 100.0)
                         issues.append(AuditIssue(
                             id=f"math-dist-{span.page}-{uuid.uuid4().hex[:6]}",
@@ -218,6 +233,9 @@ class MathAuditor(BaseAuditor):
                             category=IssueCategory.MATH,
                             severity=Severity.CRITICAL if delta_pct > 5.0 else Severity.WARNING,
                             confidence=0.99,
+                            check_type=CheckType.DETERMINISTIC,
+                            status=IssueStatus.CONFIRMED,
+                            explanation=f"Deterministic addition check: summed components ({' + '.join(f'{p:.1f}%' for p in components)}) = {total_pct:.1f}%; expected 100.0%; variance = {delta_pct:.1f}%.",
                             primary_anchor=SourceAnchor(
                                 page=span.page,
                                 bbox=BoundingBox(x0=span.bbox[0], y0=span.bbox[1], x1=span.bbox[2], y1=span.bbox[3]),

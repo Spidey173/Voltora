@@ -1,7 +1,10 @@
-import fitz  # PyMuPDF
+import pymupdf as fitz
 import re
+import logging
 from typing import List, Dict, Any, Tuple, Optional
 import io
+
+logger = logging.getLogger("voltora.parser")
 
 class ExtractedSpan:
     def __init__(self, text: str, page: int, bbox: Tuple[float, float, float, float], raw_bbox: Tuple[float, float, float, float]):
@@ -133,8 +136,8 @@ class PDFParser:
                             rows=rows,
                             raw_cells=[]
                         ))
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("Table detection on page %d skipped: %s", page_num, e)
 
             # 4. Fallback: Detect text-based tabular schedules / financial breakdowns
             for block in page_dict.get("blocks", []):

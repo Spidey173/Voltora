@@ -36,75 +36,6 @@ const FormattedAuditText: React.FC<{
   content: string;
   onJumpToPage: (page: number) => void;
 }> = ({ content, onJumpToPage }) => {
-  const lines = content.split('\n');
-  const elements: React.ReactNode[] = [];
-  let tableRows: string[] = [];
-  let inTable = false;
-
-  const flushTable = (keyPrefix: number) => {
-    if (tableRows.length === 0) return null;
-    const headerRow = tableRows[0];
-    const dataRows = tableRows.slice(2); // Skip separator row
-
-    const parseCells = (row: string) =>
-      row
-        .split('|')
-        .map((c) => c.trim())
-        .filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
-
-    const headers = parseCells(headerRow);
-
-    const tableEl = (
-      <div
-        key={`table_${keyPrefix}`}
-        style={{
-          margin: '12px 0',
-          overflowX: 'auto',
-          borderRadius: '8px',
-          border: '1px solid rgba(255, 120, 80, 0.22)',
-          backgroundColor: '#120C10',
-        }}
-      >
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', textAlign: 'left' }}>
-          <thead>
-            <tr style={{ backgroundColor: 'rgba(255, 90, 31, 0.12)', borderBottom: '1px solid rgba(255, 120, 80, 0.25)' }}>
-              {headers.map((h, i) => (
-                <th key={i} style={{ padding: '7px 10px', color: '#FFA87D', fontWeight: 700 }}>
-                  {h.replace(/\*\*/g, '')}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {dataRows.map((dr, rIdx) => {
-              const cells = parseCells(dr);
-              if (cells.length === 0) return null;
-              return (
-                <tr
-                  key={rIdx}
-                  style={{
-                    borderBottom: rIdx < dataRows.length - 1 ? '1px solid rgba(255, 120, 80, 0.08)' : 'none',
-                    backgroundColor: rIdx % 2 === 0 ? 'transparent' : 'rgba(255, 255, 255, 0.02)',
-                  }}
-                >
-                  {cells.map((cell, cIdx) => (
-                    <td key={cIdx} style={{ padding: '7px 10px', color: '#F3EAE8', verticalAlign: 'top' }}>
-                      {renderInlineFormatting(cell, onJumpToPage)}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    );
-
-    tableRows = [];
-    inTable = false;
-    return tableEl;
-  };
-
   const renderInlineFormatting = (text: string, jumpFn: (p: number) => void): React.ReactNode => {
     // Replace inline page references like "Page 1" or "Page 3" with clickable links
     const parts = text.split(/(Page\s+\d+|\*\*[^*]+\*\*|`[^`]+`)/g);
@@ -171,134 +102,211 @@ const FormattedAuditText: React.FC<{
     });
   };
 
-  lines.forEach((line, index) => {
+  const lines = content.split('\n');
+
+  type Block =
+    | { type: 'table'; rows: string[] }
+    | { type: 'h3'; text: string }
+    | { type: 'h4'; text: string }
+    | { type: 'quote'; text: string }
+    | { type: 'bullet'; text: string }
+    | { type: 'p'; text: string };
+
+  const blocks: Block[] = [];
+  let currentTable: string[] = [];
+
+  const flushTable = () => {
+    if (currentTable.length > 0) {
+      blocks.push({ type: 'table', rows: currentTable });
+      currentTable = [];
+    }
+  };
+
+  for (const line of lines) {
     const trimmed = line.trim();
-
-    // Markdown Table Detection
     if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
-      tableRows.push(trimmed);
-      inTable = true;
-      return;
-    } else if (inTable) {
-      const tbl = flushTable(index);
-      if (tbl) elements.push(tbl);
+      currentTable.push(trimmed);
+      continue;
     }
+    flushTable();
 
-    // Markdown Headers
+    if (!trimmed) continue;
+
     if (trimmed.startsWith('### ')) {
-      elements.push(
-        <div
-          key={index}
-          className="font-heading"
-          style={{
-            fontSize: '14px',
-            fontWeight: 700,
-            color: '#FFA87D',
-            marginTop: index === 0 ? '0' : '14px',
-            marginBottom: '6px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            borderBottom: '1px solid rgba(255, 120, 80, 0.14)',
-            paddingBottom: '4px',
-          }}
-        >
-          <Sparkles size={13} color="#FF5A1F" />
-          <span>{trimmed.replace(/^###\s+/, '')}</span>
-        </div>
-      );
-      return;
+      blocks.push({ type: 'h3', text: trimmed.replace(/^###\s+/, '') });
+    } else if (trimmed.startsWith('#### ')) {
+      blocks.push({ type: 'h4', text: trimmed.replace(/^####\s+/, '') });
+    } else if (trimmed.startsWith('> ')) {
+      blocks.push({ type: 'quote', text: trimmed.replace(/^>\s+/, '') });
+    } else if (trimmed.startsWith('• ') || trimmed.startsWith('- ') || /^\d+\.\s/.test(trimmed)) {
+      blocks.push({ type: 'bullet', text: trimmed.replace(/^[•-]\s+|\d+\.\s+/, '') });
+    } else {
+      blocks.push({ type: 'p', text: trimmed });
     }
-
-    if (trimmed.startsWith('#### ')) {
-      elements.push(
-        <div
-          key={index}
-          className="font-heading"
-          style={{
-            fontSize: '12px',
-            fontWeight: 700,
-            color: '#FFF1EE',
-            marginTop: '10px',
-            marginBottom: '4px',
-          }}
-        >
-          {trimmed.replace(/^####\s+/, '')}
-        </div>
-      );
-      return;
-    }
-
-    // Blockquotes
-    if (trimmed.startsWith('> ')) {
-      elements.push(
-        <div
-          key={index}
-          style={{
-            margin: '8px 0',
-            padding: '8px 12px',
-            borderLeft: '3px solid #FF5A1F',
-            backgroundColor: 'rgba(255, 90, 31, 0.08)',
-            borderRadius: '0 6px 6px 0',
-            fontStyle: 'italic',
-            fontSize: '12px',
-            color: '#FFE7E3',
-            lineHeight: 1.5,
-          }}
-        >
-          {renderInlineFormatting(trimmed.replace(/^>\s+/, ''), onJumpToPage)}
-        </div>
-      );
-      return;
-    }
-
-    // Bullet Items
-    if (trimmed.startsWith('• ') || trimmed.startsWith('- ') || /^\d+\.\s/.test(trimmed)) {
-      elements.push(
-        <div
-          key={index}
-          style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '6px',
-            fontSize: '12px',
-            lineHeight: 1.55,
-            color: '#F0DFDC',
-            marginBottom: '4px',
-            paddingLeft: '4px',
-          }}
-        >
-          <span style={{ color: '#FF7036', fontSize: '11px', marginTop: '1px' }}>▪</span>
-          <div style={{ flex: 1 }}>{renderInlineFormatting(trimmed.replace(/^[•\-]\s+|\d+\.\s+/, ''), onJumpToPage)}</div>
-        </div>
-      );
-      return;
-    }
-
-    // Regular Paragraph
-    if (trimmed.length > 0) {
-      elements.push(
-        <div
-          key={index}
-          style={{
-            fontSize: '12px',
-            lineHeight: 1.6,
-            color: '#F0DFDC',
-            marginBottom: '6px',
-          }}
-        >
-          {renderInlineFormatting(trimmed, onJumpToPage)}
-        </div>
-      );
-    }
-  });
-
-  if (inTable) {
-    const tbl = flushTable(lines.length);
-    if (tbl) elements.push(tbl);
   }
+  flushTable();
 
-  return <div>{elements}</div>;
+  return (
+    <div>
+      {blocks.map((block, idx) => {
+        if (block.type === 'table') {
+          if (block.rows.length === 0) return null;
+          const headerRow = block.rows[0];
+          const dataRows = block.rows.slice(2);
+          const parseCells = (row: string) =>
+            row
+              .split('|')
+              .map((c) => c.trim())
+              .filter((_, i, arr) => i > 0 && i < arr.length - 1);
+
+          const headers = parseCells(headerRow);
+          return (
+            <div
+              key={`table_${idx}`}
+              style={{
+                margin: '12px 0',
+                overflowX: 'auto',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 120, 80, 0.22)',
+                backgroundColor: '#120C10',
+              }}
+            >
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ backgroundColor: 'rgba(255, 90, 31, 0.12)', borderBottom: '1px solid rgba(255, 120, 80, 0.25)' }}>
+                    {headers.map((h, i) => (
+                      <th key={i} style={{ padding: '7px 10px', color: '#FFA87D', fontWeight: 700 }}>
+                        {h.replace(/\*\*/g, '')}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataRows.map((dr, rIdx) => {
+                    const cells = parseCells(dr);
+                    if (cells.length === 0) return null;
+                    return (
+                      <tr
+                        key={rIdx}
+                        style={{
+                          borderBottom: rIdx < dataRows.length - 1 ? '1px solid rgba(255, 120, 80, 0.08)' : 'none',
+                          backgroundColor: rIdx % 2 === 0 ? 'transparent' : 'rgba(255, 255, 255, 0.02)',
+                        }}
+                      >
+                        {cells.map((cell, cIdx) => (
+                          <td key={cIdx} style={{ padding: '7px 10px', color: '#F3EAE8', verticalAlign: 'top' }}>
+                            {renderInlineFormatting(cell, onJumpToPage)}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          );
+        }
+
+        if (block.type === 'h3') {
+          return (
+            <div
+              key={idx}
+              className="font-heading"
+              style={{
+                fontSize: '14px',
+                fontWeight: 700,
+                color: '#FFA87D',
+                marginTop: idx === 0 ? '0' : '14px',
+                marginBottom: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                borderBottom: '1px solid rgba(255, 120, 80, 0.14)',
+                paddingBottom: '4px',
+              }}
+            >
+              <Sparkles size={13} color="#FF5A1F" />
+              <span>{block.text}</span>
+            </div>
+          );
+        }
+
+        if (block.type === 'h4') {
+          return (
+            <div
+              key={idx}
+              className="font-heading"
+              style={{
+                fontSize: '12px',
+                fontWeight: 700,
+                color: '#FFF1EE',
+                marginTop: '10px',
+                marginBottom: '4px',
+              }}
+            >
+              {block.text}
+            </div>
+          );
+        }
+
+        if (block.type === 'quote') {
+          return (
+            <div
+              key={idx}
+              style={{
+                margin: '8px 0',
+                padding: '8px 12px',
+                borderLeft: '3px solid #FF5A1F',
+                backgroundColor: 'rgba(255, 90, 31, 0.08)',
+                borderRadius: '0 6px 6px 0',
+                fontStyle: 'italic',
+                fontSize: '12px',
+                color: '#FFE7E3',
+                lineHeight: 1.5,
+              }}
+            >
+              {renderInlineFormatting(block.text, onJumpToPage)}
+            </div>
+          );
+        }
+
+        if (block.type === 'bullet') {
+          return (
+            <div
+              key={idx}
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '6px',
+                fontSize: '12px',
+                lineHeight: 1.55,
+                color: '#F0DFDC',
+                marginBottom: '4px',
+                paddingLeft: '4px',
+              }}
+            >
+              <span style={{ color: '#FF7036', fontSize: '11px', marginTop: '1px' }}>▪</span>
+              <div style={{ flex: 1 }}>{renderInlineFormatting(block.text, onJumpToPage)}</div>
+            </div>
+          );
+        }
+
+        return (
+          <div
+            key={idx}
+            style={{
+              fontSize: '12px',
+              lineHeight: 1.6,
+              color: '#F0DFDC',
+              marginBottom: '6px',
+            }}
+          >
+            {renderInlineFormatting(block.text, onJumpToPage)}
+          </div>
+        );
+      })}
+    </div>
+  );
 };
 
 export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
@@ -309,22 +317,33 @@ export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
   onJumpToPage,
   onSelectIssue,
 }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const isClean = report.summary.total_issues === 0;
+
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: 'init_msg',
       role: 'assistant',
-      content: `### Voltora Autonomous Forensic Copilot\n\nI have completed independent verification of **${report.doc_name}**.\n\n• **Integrity Score:** **${report.summary.health_score}/100 (Grade ${report.summary.grade})**\n• **Audit Status:** Flagged **${report.summary.total_issues} discrepancies** across ${report.summary.pages_analyzed} pages (${report.summary.critical_count} Critical Contradictions, ${report.summary.warning_count} Warnings).\n\nSelect a forensic protocol below or inquire directly regarding variance calculations, capital structure conflicts, or draft SEC resolution disclosures.`,
+      content: isClean
+        ? `### Voltora Autonomous Forensic Copilot\n\nI have completed the automated audit of **${report.doc_name}**.\n\n• **Audit Status:** No discrepancies detected across ${report.summary.pages_analyzed} pages under the evaluated rules (${report.summary.passed_checks_count ?? 0} checks evaluated without contradiction).\n• **Integrity Score:** **${report.summary.health_score}/100 (Grade ${report.summary.grade})**\n\nAsk questions about specific disclosures, verified line items, or schedules in this document.`
+        : `### Voltora Autonomous Forensic Copilot\n\nI have completed the automated audit of **${report.doc_name}**.\n\n• **Integrity Score:** **${report.summary.health_score}/100 (Grade ${report.summary.grade})**\n• **Audit Status:** Flagged **${report.summary.total_issues} discrepancies** across ${report.summary.pages_analyzed} pages (${report.summary.critical_count} Critical, ${report.summary.warning_count} Warnings).\n\nSelect a forensic protocol below or inquire directly regarding variance derivations, footnote reconciliations, or remediation memo drafts.`,
       timestamp: Date.now(),
       citations: Array.from(new Set(report.issues.map((i) => i.primary_anchor.page))).map((p) => ({
         page: p,
         text: `Page ${p}`,
       })),
-      suggestedFollowups: [
-        'Summarize top discrepancies',
-        'Explain revenue & EBITDA variance',
-        'Check debt disclosures',
-        'Draft audit resolution memo',
-      ],
+      suggestedFollowups: isClean
+        ? [
+            'Summarize key financial figures',
+            'Audit debt disclosures',
+            'Verify revenue schedules',
+            'Draft audit summary memo',
+          ]
+        : [
+            'Summarize top discrepancies',
+            'Explain revenue & EBITDA variance',
+            'Check debt disclosures',
+            'Draft audit resolution memo',
+          ],
     },
   ]);
 
@@ -425,17 +444,37 @@ export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
         throw new Error('API query failed');
       }
     } catch {
+      const topIssues = report.issues.slice(0, 3);
+      const issueBullets =
+        topIssues.length > 0
+          ? topIssues
+              .map(
+                (iss) =>
+                  `• **${iss.title}** (Page ${iss.primary_anchor.page}): ${iss.description}`
+              )
+              .join('\n')
+          : '• No discrepancies detected under evaluated rules.';
+
       const fallbackMsg: ChatMessage = {
         id: `asst_${Date.now()}`,
         role: 'assistant',
-        content: `### Forensic Audit Assessment for ${report.doc_name}\n\nVoltora identified **${report.summary.total_issues} discrepancies** across ${report.summary.pages_analyzed} pages with an Integrity Score of **${report.summary.health_score}/100**.\n\nPrimary focus areas:\n• **Capital Structure:** Zero-debt claim contradicts Note 2 credit agreements.\n• **Income Statement:** Component sums ($145M) fail to tie to Total Consolidated Revenue ($165M).\n• **Unit Verification:** $42.5B on Page 2 represents a 1,000x scale typography mismatch against Page 4 ($42.5M).`,
+        content: `### Audit Assessment for ${report.doc_name}\n\nVoltora evaluated ${report.summary.pages_analyzed} pages (Integrity Score: **${report.summary.health_score}/100**).\n\n**Discrepancies (${report.summary.total_issues}):**\n${issueBullets}\n\n*Note: Offline fallback response based on the report findings.*`,
         timestamp: Date.now(),
-        citations: [1, 2, 3].map((p) => ({ page: p, text: `Page ${p}` })),
-        suggestedFollowups: [
-          'Summarize top discrepancies',
-          'Explain revenue & EBITDA variance',
-          'Draft audit resolution memo',
-        ],
+        citations: topIssues.map((iss) => ({
+          page: iss.primary_anchor.page,
+          text: `Page ${iss.primary_anchor.page}`,
+        })),
+        suggestedFollowups: isClean
+          ? [
+              'Summarize key financial figures',
+              'Audit debt disclosures',
+              'Verify revenue schedules',
+            ]
+          : [
+              'Summarize top discrepancies',
+              'Explain revenue & EBITDA variance',
+              'Draft audit resolution memo',
+            ],
       };
       setMessages((prev) => [...prev, fallbackMsg]);
     } finally {
@@ -466,14 +505,21 @@ export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
       {
         id: `init_${Date.now()}`,
         role: 'assistant',
-        content: `Conversation reset. Re-auditing **${report.doc_name}** with fresh context. Ask any question or select a forensic protocol below.`,
+        content: `Conversation reset. Re-auditing **${report.doc_name}** with fresh context. Ask any question or select a forensic inquiry below.`,
         timestamp: Date.now(),
-        suggestedFollowups: [
-          'Summarize top discrepancies',
-          'Explain revenue & EBITDA variance',
-          'Check debt disclosures',
-          'Draft audit resolution memo',
-        ],
+        suggestedFollowups: isClean
+          ? [
+              'Summarize key financial figures',
+              'Audit debt disclosures',
+              'Verify revenue schedules',
+              'Draft audit summary memo',
+            ]
+          : [
+              'Summarize top discrepancies',
+              'Explain revenue & EBITDA variance',
+              'Check debt disclosures',
+              'Draft audit resolution memo',
+            ],
       },
     ]);
   };

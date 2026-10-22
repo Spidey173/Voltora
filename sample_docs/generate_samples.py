@@ -1,5 +1,5 @@
 import os
-import fitz  # PyMuPDF
+import pymupdf as fitz
 
 def generate_acme_fy24():
     os.makedirs("sample_docs", exist_ok=True)
@@ -157,6 +157,82 @@ Net Income: $24
     doc.close()
     print(f"Generated {output_path}")
 
+def generate_vertex_audit():
+    """Generates an additional test document with 2 injected errors (1 math growth, 1 temporal milestone)
+    and clean controls for debt and tables to expand the evaluation corpus."""
+    os.makedirs("sample_docs", exist_ok=True)
+    doc = fitz.open()
+    rect = fitz.Rect(54, 54, 612 - 54, 792 - 54)
+
+    # --- Page 1: Vertex Energy Overview ---
+    page1 = doc.new_page(width=612, height=792)
+    p1_text = """VERTEX ENERGY CORP
+OPERATIONAL AUDIT & FINANCIAL UPDATE - FY2024
+
+1. Performance Highlights
+During fiscal 2024, Vertex Energy expanded power distribution operations. Operating margin increased by 25% from 80 to 120 in our primary grid segment, reflecting efficiency improvements.
+
+2. Infrastructure Milestones
+Under our modern grid plan, Project Titan completion was achieved in February 2024, while Project Titan kickoff was initiated in August 2024 across regional facilities.
+
+3. Capital Position
+Vertex Energy holds $35M in term debt and $15M in cash, in compliance with all banking covenants throughout fiscal 2024.
+"""
+    page1.insert_textbox(rect, p1_text, fontsize=11, fontname="helv", color=(0.1, 0.1, 0.1))
+
+    # --- Page 2: Financial Breakdown (Clean Cross-Footing) ---
+    page2 = doc.new_page(width=612, height=792)
+    p2_text = """VERTEX ENERGY CORP
+COST SCHEDULE & OPERATIONAL OUTLAYS
+(in millions of USD)
+
+Operating Costs Breakdown:
+Fuel and Energy Transmission: $50
+Plant Labor and Engineering: $30
+Maintenance and Operations: $20
+Total Operating Costs: $100
+
+Notes:
+All reported cost lines reconcile mathematically with the total operating expenditure.
+"""
+    page2.insert_textbox(rect, p2_text, fontsize=11, fontname="helv", color=(0.1, 0.1, 0.1))
+
+    output_path = "sample_docs/vertex_energy_audit.pdf"
+    doc.save(output_path)
+    doc.close()
+    print(f"Generated {output_path}")
+
+def generate_nova_clean():
+    """Generates an additional clean document control to test false-positive performance."""
+    os.makedirs("sample_docs", exist_ok=True)
+    doc = fitz.open()
+    rect = fitz.Rect(54, 54, 612 - 54, 792 - 54)
+
+    page1 = doc.new_page(width=612, height=792)
+    p1_text = """NOVA HEALTH SYSTEMS
+QUARTERLY FINANCIAL DISCLOSURE - Q4 2024
+
+Executive Commentary:
+Nova Health Systems maintained steady clinical and operational momentum throughout the quarter.
+Operating revenue increased by 20% from 50 to 60 during the period ended December 31, 2024.
+
+Departmental Revenue Breakdown:
+- Inpatient Services: 60% of total revenue
+- Outpatient Clinics: 40% of total revenue
+Total Allocation: 100% of revenue accounted for.
+
+Capital Structure:
+The organization maintained $25M in operational liquidity and zero debt obligations as of December 31, 2024.
+"""
+    page1.insert_textbox(rect, p1_text, fontsize=11, fontname="helv", color=(0.1, 0.1, 0.1))
+
+    output_path = "sample_docs/nova_clean_quarterly.pdf"
+    doc.save(output_path)
+    doc.close()
+    print(f"Generated {output_path}")
+
 if __name__ == "__main__":
     generate_acme_fy24()
     generate_clean_statement()
+    generate_vertex_audit()
+    generate_nova_clean()

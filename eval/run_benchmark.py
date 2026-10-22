@@ -12,6 +12,53 @@ from eval.ground_truth import GROUND_TRUTH_DATASET
 
 console = Console()
 
+def matches_ground_truth(det, exp: Dict[str, Any]) -> bool:
+    """Strict ground-truth matching requiring category, page/cross-page alignment,
+    and specific evidence token verification."""
+    cat = det.category.value if hasattr(det.category, 'value') else str(det.category)
+    if cat != exp["category"]:
+        return False
+
+    det_p1 = det.primary_anchor.page
+    det_p2 = det.secondary_anchor.page if det.secondary_anchor else None
+
+    exp_p1 = exp.get("page")
+    exp_p2 = exp.get("secondary_page")
+
+    # Page matching
+    if exp_p2 is None or exp_p2 == exp_p1:
+        # Intra-page issue (e.g. single page or both anchors on same page)
+        if det_p1 != exp_p1:
+            return False
+        if det_p2 is not None and det_p2 != exp_p1:
+            return False
+    else:
+        # Cross page issue: both pages must match
+        if not det_p2:
+            return False
+        pages_match = (det_p1 == exp_p1 and det_p2 == exp_p2) or (det_p1 == exp_p2 and det_p2 == exp_p1)
+        if not pages_match:
+            return False
+
+    # Evidence keyword matching
+    keywords = exp.get("evidence_keywords", [])
+    if keywords:
+        finding_blob = " ".join([
+            det.title,
+            det.description,
+            det.primary_anchor.text,
+            det.secondary_anchor.text if det.secondary_anchor else "",
+            det.actual_value or "",
+            det.expected_value or "",
+            det.explanation or ""
+        ]).lower()
+
+        # At least one key evidence keyword must be present
+        if not any(kw.lower() in finding_blob for kw in keywords):
+            return False
+
+    return True
+
 def run_evaluation() -> Dict[str, Any]:
     orchestrator = AuditOrchestrator()
     category_stats = {
@@ -24,45 +71,53 @@ def run_evaluation() -> Dict[str, Any]:
     total_pages = 0
     total_time_ms = 0.0
     doc_results = []
+    skipped_docs = []
+    clean_docs_count = 0
+    clean_doc_false_positives = 0
 
     for test_case in GROUND_TRUTH_DATASET:
         file_path = test_case["file_path"]
         if not os.path.exists(file_path):
             console.print(f"[red]Warning: Test file {file_path} not found. Skipping.[/red]")
+            skipped_docs.append({
+                "doc_id": test_case["doc_id"],
+                "file_path": file_path,
+                "reason": "File not found"
+            })
             continue
 
-        with open(file_path, "rb") as f:
-            pdf_bytes = f.read()
+        try:
+            with open(file_path, "rb") as f:
+                pdf_bytes = f.read()
 
-        start = time.time()
-        parsed, _ = PDFParser.parse_pdf(pdf_bytes, doc_id=test_case["doc_id"], title=os.path.basename(file_path))
-        report = orchestrator.audit_document(parsed)
-        duration_ms = (time.time() - start) * 1000.0
+            start = time.time()
+            parsed, _ = PDFParser.parse_pdf(pdf_bytes, doc_id=test_case["doc_id"], title=os.path.basename(file_path))
+            report = orchestrator.audit_document(parsed)
+            duration_ms = (time.time() - start) * 1000.0
 
-        total_pages += parsed.total_pages
-        total_time_ms += duration_ms
+            total_pages += parsed.total_pages
+            total_time_ms += duration_ms
 
-        expected = list(test_case["expected_issues"])
-        detected = list(report.issues)
+            expected = list(test_case.get("expected_issues", []))
+            detected = list(report.issues)
+            is_clean_doc = test_case.get("is_clean", len(expected) == 0)
 
-        # Match detected to expected
-        matched_expected = set()
-        matched_detected = set()
+            if is_clean_doc:
+                clean_docs_count += 1
+                clean_doc_false_positives += len(detected)
 
-        for d_idx, det in enumerate(detected):
-            cat = det.category.value
-            det_p1 = det.primary_anchor.page
-            det_p2 = det.secondary_anchor.page if det.secondary_anchor else None
+            # Strict 1-to-1 match detected to expected
+            matched_expected = set()
+            matched_detected = set()
 
-            match_found = False
-            for e_idx, exp in enumerate(expected):
-                if e_idx in matched_expected:
-                    continue
-                if exp["category"] == cat:
-                    exp_p1 = exp.get("page")
-                    exp_p2 = exp.get("secondary_page")
-                    # Match if primary page matches (or cross-pages match)
-                    if exp_p1 == det_p1 or (exp_p2 and exp_p2 == det_p1) or (exp_p2 and det_p2 and exp_p2 == det_p2):
+            for d_idx, det in enumerate(detected):
+                cat = det.category.value if hasattr(det.category, 'value') else str(det.category)
+                match_found = False
+
+                for e_idx, exp in enumerate(expected):
+                    if e_idx in matched_expected:
+                        continue
+                    if matches_ground_truth(det, exp):
                         match_found = True
                         matched_expected.add(e_idx)
                         matched_detected.add(d_idx)
@@ -70,29 +125,39 @@ def run_evaluation() -> Dict[str, Any]:
                             category_stats[cat]["tp"] += 1
                         break
 
-            if not match_found:
-                if cat in category_stats:
-                    category_stats[cat]["fp"] += 1
+                if not match_found:
+                    if cat in category_stats:
+                        category_stats[cat]["fp"] += 1
 
-        # Unmatched expected are false negatives
-        for e_idx, exp in enumerate(expected):
-            if e_idx not in matched_expected:
-                cat = exp["category"]
-                if cat in category_stats:
-                    category_stats[cat]["fn"] += 1
+            # Unmatched expected are false negatives
+            for e_idx, exp in enumerate(expected):
+                if e_idx not in matched_expected:
+                    cat = exp["category"]
+                    if cat in category_stats:
+                        category_stats[cat]["fn"] += 1
 
-        doc_results.append({
-            "doc_id": test_case["doc_id"],
-            "pages": parsed.total_pages,
-            "duration_ms": round(duration_ms, 2),
-            "health_score": report.summary.health_score,
-            "grade": report.summary.grade,
-            "detected_issues_count": len(report.issues),
-            "ground_truth_count": len(test_case["expected_issues"])
-        })
+            doc_results.append({
+                "doc_id": test_case["doc_id"],
+                "file_path": file_path,
+                "is_clean": is_clean_doc,
+                "pages": parsed.total_pages,
+                "duration_ms": round(duration_ms, 2),
+                "health_score": report.summary.health_score,
+                "grade": report.summary.grade,
+                "detected_issues_count": len(report.issues),
+                "ground_truth_count": len(expected),
+                "matched_count": len(matched_expected)
+            })
+        except Exception as err:
+            console.print(f"[red]Error evaluating {file_path}: {err}[/red]")
+            skipped_docs.append({
+                "doc_id": test_case["doc_id"],
+                "file_path": file_path,
+                "reason": f"Execution error: {str(err)}"
+            })
 
     # Calculate metrics
-    table = Table(title="Document Auditor - Rigorous Verification Benchmark", header_style="bold cyan")
+    table = Table(title="Voltora Document Auditor - Empirical Benchmark Suite", header_style="bold cyan")
     table.add_column("Audit Category", style="bold white")
     table.add_column("Ground Truth", justify="right")
     table.add_column("TP", justify="right", style="green")
@@ -107,6 +172,10 @@ def run_evaluation() -> Dict[str, Any]:
     total_fn = 0
     cat_metrics = {}
 
+    macro_precs = []
+    macro_recs = []
+    macro_f1s = []
+
     for cat, stats in category_stats.items():
         tp = stats["tp"]
         fp = stats["fp"]
@@ -119,7 +188,16 @@ def run_evaluation() -> Dict[str, Any]:
         rec = (tp / (tp + fn)) * 100 if (tp + fn) > 0 else 100.0
         f1 = (2 * prec * rec) / (prec + rec) if (prec + rec) > 0 else 0.0
 
+        if (tp + fn > 0) or (tp + fp > 0):
+            macro_precs.append(prec)
+            macro_recs.append(rec)
+            macro_f1s.append(f1)
+
         cat_metrics[cat] = {
+            "ground_truth": tp + fn,
+            "tp": tp,
+            "fp": fp,
+            "fn": fn,
             "precision": round(prec, 2),
             "recall": round(rec, 2),
             "f1": round(f1, 2)
@@ -137,31 +215,50 @@ def run_evaluation() -> Dict[str, Any]:
             f"{f1:.1f}%"
         )
 
-    overall_prec = (total_tp / (total_tp + total_fp)) * 100 if (total_tp + total_fp) > 0 else 100.0
-    overall_rec = (total_tp / (total_tp + total_fn)) * 100 if (total_tp + total_fn) > 0 else 100.0
-    overall_f1 = (2 * overall_prec * overall_rec) / (overall_prec + overall_rec) if (overall_prec + overall_rec) > 0 else 0.0
+    # Micro average
+    micro_prec = (total_tp / (total_tp + total_fp)) * 100 if (total_tp + total_fp) > 0 else 100.0
+    micro_rec = (total_tp / (total_tp + total_fn)) * 100 if (total_tp + total_fn) > 0 else 100.0
+    micro_f1 = (2 * micro_prec * micro_rec) / (micro_prec + micro_rec) if (micro_prec + micro_rec) > 0 else 0.0
+
+    # Macro average
+    macro_prec = sum(macro_precs) / max(1, len(macro_precs))
+    macro_rec = sum(macro_recs) / max(1, len(macro_recs))
+    macro_f1 = sum(macro_f1s) / max(1, len(macro_f1s))
 
     table.add_section()
     table.add_row(
-        "OVERALL MACRO",
+        "MICRO AVERAGE",
         str(total_tp + total_fn),
         str(total_tp),
         str(total_fp),
         str(total_fn),
-        f"{overall_prec:.1f}%",
-        f"{overall_rec:.1f}%",
-        f"{overall_f1:.1f}%"
+        f"{micro_prec:.1f}%",
+        f"{micro_rec:.1f}%",
+        f"{micro_f1:.1f}%"
+    )
+    table.add_row(
+        "MACRO AVERAGE",
+        str(total_tp + total_fn),
+        "-",
+        "-",
+        "-",
+        f"{macro_prec:.1f}%",
+        f"{macro_rec:.1f}%",
+        f"{macro_f1:.1f}%"
     )
 
     console.print(table)
 
     avg_latency_per_page = total_time_ms / max(1, total_pages)
     summary_panel = Panel(
-        f"[bold green]Audit Precision:[/bold green] {overall_prec:.1f}%\n"
-        f"[bold green]Audit Recall:[/bold green] {overall_rec:.1f}%\n"
-        f"[bold magenta]Overall F1-Score:[/bold magenta] {overall_f1:.1f}%\n"
+        f"[bold green]Micro Precision:[/bold green] {micro_prec:.1f}%\n"
+        f"[bold green]Micro Recall:[/bold green] {micro_rec:.1f}%\n"
+        f"[bold magenta]Micro F1-Score:[/bold magenta] {micro_f1:.1f}%\n"
+        f"[bold cyan]Macro F1-Score:[/bold cyan] {macro_f1:.1f}%\n"
+        f"[bold yellow]Clean Documents Tested:[/bold yellow] {clean_docs_count} (False alarms: {clean_doc_false_positives})\n"
+        f"[bold yellow]Skipped Documents:[/bold yellow] {len(skipped_docs)}\n"
         f"[bold cyan]Avg Latency / Page:[/bold cyan] {avg_latency_per_page:.1f} ms\n"
-        f"[bold yellow]Total Pages Processed:[/bold yellow] {total_pages}",
+        f"[bold white]Total Pages Evaluated:[/bold white] {total_pages}",
         title="[bold white]Benchmark Performance Summary[/bold white]",
         border_style="cyan"
     )
@@ -169,11 +266,25 @@ def run_evaluation() -> Dict[str, Any]:
 
     result_data = {
         "timestamp": time.time(),
+        "total_documents": len(doc_results),
         "total_pages": total_pages,
+        "clean_documents_tested": clean_docs_count,
+        "clean_document_false_positives": clean_doc_false_positives,
+        "skipped_documents": skipped_docs,
         "avg_latency_per_page_ms": round(avg_latency_per_page, 2),
-        "overall_precision": round(overall_prec, 2),
-        "overall_recall": round(overall_rec, 2),
-        "overall_f1": round(overall_f1, 2),
+        "overall_precision": round(micro_prec, 2),
+        "overall_recall": round(micro_rec, 2),
+        "overall_f1": round(micro_f1, 2),
+        "micro_metrics": {
+            "precision": round(micro_prec, 2),
+            "recall": round(micro_rec, 2),
+            "f1": round(micro_f1, 2)
+        },
+        "macro_metrics": {
+            "precision": round(macro_prec, 2),
+            "recall": round(macro_rec, 2),
+            "f1": round(macro_f1, 2)
+        },
         "categories": cat_metrics,
         "documents": doc_results
     }

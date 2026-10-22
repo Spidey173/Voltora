@@ -152,7 +152,7 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
           },
         }));
       }
-    } catch (err) {
+    } catch {
       setChatStates((prev) => ({
         ...prev,
         [issueId]: { ...prev[issueId], loading: false },
@@ -357,19 +357,35 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
             }}
           >
             {filteredIssues.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '30px 16px', color: '#806B70', fontSize: '12px' }}>
-                <CheckCircle2 size={24} color="#10B981" style={{ margin: '0 auto 6px auto' }} />
-                <div>No issues under this specific filter.</div>
-                <button
-                  onClick={() => {
-                    setFilter('all');
-                    setSearchQuery('');
-                  }}
-                  className="btn-secondary"
-                  style={{ marginTop: '10px', padding: '4px 10px', fontSize: '11px' }}
-                >
-                  View All Issues ({report.issues.length})
-                </button>
+              <div style={{ textAlign: 'center', padding: '36px 18px', color: '#806B70', fontSize: '12px' }}>
+                <CheckCircle2 size={32} color="#10B981" style={{ margin: '0 auto 10px auto' }} />
+                {report.issues.length === 0 ? (
+                  <>
+                    <div style={{ fontWeight: 700, color: '#FFF1EE', fontSize: '13px', marginBottom: '6px' }}>
+                      No Discrepancies Detected in Checked Scope
+                    </div>
+                    <div style={{ color: '#A89297', lineHeight: 1.5, maxWidth: '280px', margin: '0 auto 10px' }}>
+                      Evaluated tables, percentage breakdowns, milestone timelines, and scale units reconciled consistently with automated rules.
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#6A565B' }}>
+                      Note: Automated checks do not certify complete document accuracy.
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ color: '#BCA3A7' }}>No issues match the selected filter.</div>
+                    <button
+                      onClick={() => {
+                        setFilter('all');
+                        setSearchQuery('');
+                      }}
+                      className="btn-secondary"
+                      style={{ marginTop: '10px', padding: '4px 10px', fontSize: '11px' }}
+                    >
+                      View All Issues ({report.issues.length})
+                    </button>
+                  </>
+                )}
               </div>
             ) : (
               <>
@@ -488,6 +504,26 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
                             <span>#{globalIndex} {meta.label}</span>
                           </span>
 
+                          {issue.check_type && (
+                            <span
+                              style={{
+                                fontSize: '8.5px',
+                                fontWeight: 700,
+                                color: issue.check_type === 'deterministic' ? '#38BDF8' : '#C084FC',
+                                backgroundColor: issue.check_type === 'deterministic' ? 'rgba(56, 189, 248, 0.12)' : 'rgba(192, 132, 252, 0.12)',
+                                border: `1px solid ${issue.check_type === 'deterministic' ? 'rgba(56, 189, 248, 0.28)' : 'rgba(192, 132, 252, 0.28)'}`,
+                                padding: '1px 4px',
+                                borderRadius: '3px',
+                              }}
+                            >
+                              {issue.check_type === 'deterministic' ? 'Deterministic' : 'Heuristic'}
+                            </span>
+                          )}
+                          {issue.status === 'needs_review' && (
+                            <span style={{ fontSize: '8.5px', fontWeight: 700, color: '#FBBF24', backgroundColor: 'rgba(251, 191, 36, 0.15)', border: '1px solid rgba(251, 191, 36, 0.3)', padding: '1px 4px', borderRadius: '3px' }}>
+                              Review
+                            </span>
+                          )}
                           {isConfirmed && (
                             <span style={{ fontSize: '9px', fontWeight: 700, color: '#FF7036', backgroundColor: 'rgba(255, 90, 31, 0.18)', padding: '1px 5px', borderRadius: '3px' }}>
                               ✓ Confirmed
@@ -598,6 +634,26 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
                           <span>{meta.label}</span>
                         </span>
 
+                        {issue.check_type && (
+                          <span
+                            style={{
+                              fontSize: '9px',
+                              fontWeight: 700,
+                              color: issue.check_type === 'deterministic' ? '#38BDF8' : '#C084FC',
+                              backgroundColor: issue.check_type === 'deterministic' ? 'rgba(56, 189, 248, 0.14)' : 'rgba(192, 132, 252, 0.14)',
+                              border: `1px solid ${issue.check_type === 'deterministic' ? 'rgba(56, 189, 248, 0.3)' : 'rgba(192, 132, 252, 0.3)'}`,
+                              padding: '1px 5px',
+                              borderRadius: '3px',
+                            }}
+                          >
+                            {issue.check_type === 'deterministic' ? 'Deterministic Rule' : 'Heuristic NLI'}
+                          </span>
+                        )}
+                        {issue.status === 'needs_review' && (
+                          <span style={{ fontSize: '9px', fontWeight: 700, color: '#FBBF24', backgroundColor: 'rgba(251, 191, 36, 0.18)', border: '1px solid rgba(251, 191, 36, 0.35)', padding: '1px 5px', borderRadius: '3px' }}>
+                            Needs Review
+                          </span>
+                        )}
                         {isConfirmed && (
                           <span style={{ fontSize: '9px', fontWeight: 700, color: '#FF7036', backgroundColor: 'rgba(255, 90, 31, 0.2)', padding: '1px 5px', borderRadius: '3px' }}>
                             ✓ Confirmed
@@ -631,7 +687,7 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
                       {issue.title}
                     </h4>
 
-                    {/* Full Forensic Description */}
+                    {/* Full Description */}
                     <p
                       style={{
                         fontSize: '11.5px',
@@ -642,6 +698,26 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
                     >
                       {issue.description}
                     </p>
+
+                    {/* Derivation Explanation */}
+                    {issue.explanation && (
+                      <div
+                        style={{
+                          backgroundColor: 'rgba(255, 90, 31, 0.06)',
+                          border: '1px solid rgba(255, 120, 80, 0.18)',
+                          borderRadius: '6px',
+                          padding: '8px 10px',
+                          marginBottom: '10px',
+                        }}
+                      >
+                        <div style={{ fontSize: '10px', fontWeight: 700, color: '#FFA87D', marginBottom: '2px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          Derivation Explanation
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#E2D3D0', lineHeight: 1.45 }}>
+                          {issue.explanation}
+                        </div>
+                      </div>
+                    )}
 
                     {/* ═══ 2-SIDED AUDIT EVIDENCE CITATIONS ═══ */}
                     <div

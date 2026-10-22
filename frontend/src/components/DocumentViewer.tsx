@@ -52,21 +52,30 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
 
   // Helper to extract clean human-readable section titles per page
   const getPageTitle = (pNum: number): string => {
-    const titlesByPage: Record<number, string> = {
-      1: 'Executive Overview & Strategic Direction',
-      2: 'Operational Highlights & Segment Review',
-      3: 'Consolidated Statement of Operations',
-      4: 'Supplementary Schedules & Disclosures',
-    };
-    if (titlesByPage[pNum]) return titlesByPage[pNum];
-
     const pEvidence = report.pages.find((p) => p.page === pNum);
     if (pEvidence && pEvidence.text_spans.length > 0) {
       const heading = pEvidence.text_spans
         .map((s) => s.text.trim())
-        .find((t) => t.length > 5 && !t.includes('ACME CORPORATION') && !t.includes('APEX TECH'));
-      if (heading) return heading.slice(0, 42);
+        .find(
+          (t) =>
+            t.length > 4 &&
+            t.length < 80 &&
+            !t.toLowerCase().startsWith('page ') &&
+            !/^\d+$/.test(t)
+        );
+      if (heading) return heading.slice(0, 45);
     }
+
+    if (report.doc_name.toLowerCase().includes('acme')) {
+      const titlesByPage: Record<number, string> = {
+        1: 'Executive Overview & Strategic Direction',
+        2: 'Operational Highlights & Segment Review',
+        3: 'Consolidated Statement of Operations',
+        4: 'Supplementary Schedules & Disclosures',
+      };
+      if (titlesByPage[pNum]) return titlesByPage[pNum];
+    }
+
     return `Page ${pNum}`;
   };
 

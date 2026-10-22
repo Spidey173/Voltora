@@ -29,6 +29,14 @@ class SourceAnchor(BaseModel):
     text: str = Field(..., description="Exact quoted text from document")
     label: Optional[str] = None  # e.g. "Primary Claim", "Conflicting Source", "Table Total"
 
+class CheckType(str, Enum):
+    DETERMINISTIC = "deterministic"
+    HEURISTIC = "heuristic"
+
+class IssueStatus(str, Enum):
+    CONFIRMED = "confirmed"
+    NEEDS_REVIEW = "needs_review"
+
 class AuditIssue(BaseModel):
     id: str
     title: str
@@ -36,6 +44,9 @@ class AuditIssue(BaseModel):
     category: IssueCategory
     severity: Severity
     confidence: float = Field(default=0.95, ge=0.0, le=1.0)
+    check_type: CheckType = Field(default=CheckType.DETERMINISTIC, description="deterministic (e.g. arithmetic, unit scale) or heuristic (e.g. semantic NLI, entity matching)")
+    status: IssueStatus = Field(default=IssueStatus.CONFIRMED, description="confirmed issue or needs_review")
+    explanation: Optional[str] = Field(default=None, description="Step-by-step derivation of how the finding was identified")
     primary_anchor: SourceAnchor
     secondary_anchor: Optional[SourceAnchor] = None
     expected_value: Optional[str] = None
@@ -47,7 +58,7 @@ class AuditIssue(BaseModel):
 class PageEvidence(BaseModel):
     page: int
     text_spans: List[Dict[str, Any]] = []
-    evidence_score: float = Field(default=1.0, description="0.0 (red/severe issues) to 1.0 (green/verified)")
+    evidence_score: float = Field(default=1.0, description="0.0 (red/severe issues) to 1.0 (green/no issues detected)")
     issue_ids: List[str] = []
 
 class AuditSummary(BaseModel):
@@ -57,7 +68,11 @@ class AuditSummary(BaseModel):
     critical_count: int
     warning_count: int
     info_count: int
-    verified_claims_count: int
+    deterministic_count: int = 0
+    heuristic_count: int = 0
+    needs_review_count: int = 0
+    passed_checks_count: int = 0
+    verified_claims_count: int = 0
     tables_analyzed: int
     pages_analyzed: int
     audit_duration_ms: float
