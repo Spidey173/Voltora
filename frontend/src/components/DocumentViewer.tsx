@@ -692,7 +692,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             />
           )}
 
-          {/* ═══ NON-INVASIVE FORENSIC MARGIN CALLOUT PINS & COORDINATE HIGHLIGHTS ═══ */}
+          {/* ═══ EVIDENCE MARGIN CALLOUT PINS & COORDINATE HIGHLIGHTS ═══ */}
           {pageIssues.map((issue) => {
             const isPrimary = issue.primary_anchor.page === activePage;
             const anchor = isPrimary ? issue.primary_anchor : issue.secondary_anchor;

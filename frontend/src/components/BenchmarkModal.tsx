@@ -77,10 +77,10 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ isOpen, onClose,
             </div>
             <div>
               <h3 className="font-heading" style={{ fontSize: '16px', fontWeight: 700, color: '#FFF1EE', marginBottom: '2px' }}>
-                Empirical Evaluation Benchmark
+                Synthetic Test Suite Evaluation
               </h3>
               <p style={{ fontSize: '12px', color: '#BCA3A7' }}>
-                Strict 1-to-1 category, page, and evidence keyword ground-truth matching
+                Automated regression test suite evaluated on generated test documents with strict 1-to-1 matching
               </p>
             </div>
           </div>
@@ -246,9 +246,12 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ isOpen, onClose,
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600, color: '#FFA87D', marginBottom: '4px' }}>
             <ShieldCheck size={14} />
-            <span>Controlled Evaluation Scope</span>
+            <span>Synthetic Evaluation Scope & Limitations</span>
           </div>
-          Evaluated against {cleanTested} clean baseline documents (0 false alarms) and {data?.total_documents ? data.total_documents - cleanTested : 2} injected issue reports. Metrics reflect modeled synthetic test filings; real-world document performance may vary based on OCR quality, layout complexity, and non-standard disclosures.
+          Evaluated against {data?.total_documents || 4} generated test documents ({data?.total_pages || 10} pages total): {cleanTested} clean baseline controls (0 false alarms) and {data?.total_documents ? data.total_documents - cleanTested : 2} injected discrepancy reports (10 ground-truth issues).
+          <div style={{ marginTop: '6px', color: '#BCA3A7' }}>
+            <strong>Important Limitation:</strong> This benchmark is a software regression test designed to verify that auditor rules trigger accurately on programmed examples. It does not measure or prove generalized accuracy on real-world financial filings, which feature varied accounting standards, complex multi-column typography, and noisy scans.
+          </div>
         </div>
 
         {/* Footer */}

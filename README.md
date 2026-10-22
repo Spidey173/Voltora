@@ -1,26 +1,65 @@
 # Voltora: Multi-Dimensional Document Auditor
 
-> **An automated document audit application designed to assist reviewers in identifying numerical discrepancies, cross-statement contradictions, timeline inversions, and scale mismatches.**  
-> Voltora automatically ingests PDF documents, evaluates arithmetic integrity, cross-page narrative consistency, chronological milestone sequences, and unit scale consistency, outputting a coordinate-grounded diagnostics dashboard.
+> **An automated document review tool designed to assist human analysts in detecting arithmetic inconsistencies, conflicting cross-page narrative disclosures, milestone timeline inversions, and unit denomination scale errors.**  
+> Built as a portfolio project showcasing coordinate-anchored PDF parsing, deterministic and heuristic rule pipelines, and evidence-grounded document inspection.
 
 ---
 
-## 🔍 Core Architecture
+## 📋 What This Project Does / Does Not Do
 
-1. **Deterministic & Heuristic Hybrid Pipeline**:
-   - **Deterministic Checks**: Table column cross-footing, in-text percentage rates, distribution totals, and unit scale conversions are verified mathematically with explicit step-by-step derivation explanations.
-   - **Heuristic Checks**: Cross-page narrative claims are clustered via TF-IDF candidate pairing and evaluated for mutual exclusivity, metric divergence, and polarity mismatches within comparable entities and time periods.
-   - **Review Flags**: Ambiguous pairs or unverified contexts are classified as `needs_review` or omitted, rather than presented as confirmed errors.
-2. **Dual-Anchor Coordinate Grounding**:
-   - Normalized coordinate vectors (`[x0, y0, x1, y1] \in [0.0, 1.0]`) mapped to SVG overlays on rendered PDF pages.
-   - For contradictions spanning different pages, linked dual-anchor jumpers allow 1-click comparison between source and conflicting sections.
-3. **Evidence Heatmap Overlay**:
-   - Page-level evidence indicator highlighting pages with detected discrepancies (Crimson = critical issues, Amber = warnings, Green = no issues detected within evaluated rules).
-   - *Note:* A green page indicates that no issues were detected by the evaluated automated rules; it does not constitute a certification of complete document accuracy.
-4. **Context-Grounded Issue Review & Assistant**:
-   - Provides focused evidence summaries and derivation breakdowns for each finding.
-   - Qualified recommendations for reconciliation without claiming legal, regulatory, or certified audit authority.
-   - Clean fallback handling when external LLM credentials are not configured or encounter provider errors.
+### What Voltora Does
+- **Automates mechanical reconciliation**: Verifies table row/column sums, percentage distribution totals, milestone date sequences, and unit multipliers across multi-page PDFs.
+- **Coordinates-anchors every finding**: Computes normalized bounding boxes (`[x0, y0, x1, y1]`) on rendered PDF canvases so reviewers can immediately see the exact source text and any conflicting passage.
+- **Strictly isolates deterministic from heuristic rules**: Arithmetic and unit checks produce exact mathematical derivations, whereas semantic contradictions are labeled as heuristic checks and flag ambiguous contexts as `needs_review`.
+- **Runs entirely locally**: Ingests, parses, and audits PDFs in-memory without sending proprietary documents to third-party databases.
+
+### What Voltora Does NOT Do
+- **Does not replace certified accounting or audit judgment**: Voltora does not perform statutory audits, provide legal opinions, or guarantee compliance with GAAP/IFRS.
+- **Does not claim full document verification**: A document with zero flagged issues only means that none of the evaluated rules were triggered; it is not a certification of overall accuracy.
+- **Does not support multi-tenant public deployment**: There is no authentication, role-based access control (RBAC), or database tenant isolation. It is engineered strictly for single-user local analyst workflows.
+- **Does not generalize benchmark scores to arbitrary real-world filings**: The benchmark suite is a software regression test evaluating 10 programmed findings across 4 synthetic test PDFs.
+
+---
+
+## 🔍 Core Architecture & Key Engineering Decisions
+
+```
+[ Uploaded PDF ] ──> [ PyMuPDF Parser ] ──> Normalized Text Blocks, Tables, & Coordinates
+                                                      │
+                       ┌──────────────────────────────┴──────────────────────────────┐
+                       ▼                                                             ▼
+         [ Deterministic Subsystems ]                                  [ Heuristic Subsystems ]
+       - Table cross-footing (MathAuditor)                           - Cross-page claims (SemanticAuditor)
+       - Percentage rate & breakdown checks                          - Polarity & metric compatibility checks
+       - Timeline & milestone sequences (TemporalAuditor)            - TF-IDF candidate clustering
+       - Denomination & scale consistency (UnitAuditor)              - Unverified/ambiguous -> "needs_review"
+                       │                                                             │
+                       └──────────────────────────────┬──────────────────────────────┘
+                                                      ▼
+                                       [ Audit Orchestrator ]
+                                       - Severity assignment
+                                       - Bounding-box coordinate anchoring
+                                       - Health score calculation
+                                                      ▼
+                                 [ Interactive React + Vite Review UI ]
+                                 - Dual-anchor visual jumpers
+                                 - Evidence heatmap
+                                 - Optional LLM review assistant
+```
+
+### Key Engineering Decisions
+
+1. **Strict Separation of Deterministic Rules vs. Heuristic Inference:**
+   - *Problem:* LLMs frequently hallucinate arithmetic errors or assert contradictions when wording differs slightly.
+   - *Decision:* All mathematical checks (table cross-footing, distribution totals, growth rates) and scale factors are computed via deterministic Python logic with step-by-step mathematical proofs. LLM/NLP techniques are reserved exclusively for candidate sentence clustering and heuristic polarity comparisons, where ambiguous cases are surfaced for human confirmation rather than asserted as facts.
+
+2. **Dual-Coordinate Visual Anchoring (`[x0, y0, x1, y1]`):**
+   - *Problem:* Text-only audit logs force reviewers to manually scan multi-page filings to locate the numbers in question.
+   - *Decision:* Bounding boxes are extracted during PDF parsing and normalized to `[0.0, 1.0]`. When an issue spans two pages (e.g., Page 1 narrative contradicts Page 4 table), the UI renders visual jumper pins linking both exact coordinates on the rendered PDF canvases.
+
+3. **Synchronous Execution Model Over Simulated Progress:**
+   - *Problem:* Many prototypes use `setInterval` or randomized progress bars to create the illusion of complex asynchronous background jobs.
+   - *Decision:* Document ingestion and multi-pass rule evaluation execute synchronously on the server in ~50-150ms. The application truthfully displays an active loading state while the single HTTP request is in-flight and immediately renders the results upon response.
 
 ---
 
@@ -101,15 +140,36 @@ Evaluated across **4 test documents (10 pages total)**:
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started (Clean Checkout Setup)
 
-### 1. Launch Backend & Frontend
+### Prerequisites
+- **Python**: 3.10+ (tested on Python 3.12)
+- **Node.js**: 18+ (tested with npm)
+
+### 1. Installation from Scratch
+```bash
+# Clone and enter directory
+git clone https://github.com/Spidey173/Voltora.git
+cd Voltora
+
+# Setup Python virtual environment & backend dependencies
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# Setup Frontend dependencies
+cd frontend
+npm install
+cd ..
+```
+
+### 2. Launch Backend & Frontend
 Using the automated launcher:
 ```bash
 ./run.sh
 ```
 
-Or manually:
+Or manually in separate terminals:
 ```bash
 # Terminal 1: Backend
 source .venv/bin/activate
@@ -121,13 +181,16 @@ npm run dev
 ```
 Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
-### 2. Run Benchmark Suite
+### 3. Run Synthetic Benchmark Suite
 ```bash
+source .venv/bin/activate
 python -m eval.run_benchmark
 ```
-Runs the strict 1-to-1 evaluation suite and updates `eval/benchmark_results.json`.
+Runs the strict 1-to-1 regression evaluation across all 4 synthetic test PDFs and updates `eval/benchmark_results.json`.
 
-### 3. Run Test Suite
+### 4. Run Test Suite
 ```bash
+source .venv/bin/activate
 python -m unittest discover tests
 ```
+Runs the full Python unit and integration test suite (26 tests).

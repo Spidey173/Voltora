@@ -66,7 +66,7 @@ export const HeroExperience: React.FC<HeroExperienceProps> = ({
         }}
       >
         <Flame size={14} color="#FF7036" />
-        <span>Autonomous Multi-Dimensional Document Auditor</span>
+        <span>Automated Multi-Dimensional Document Auditor</span>
       </div>
 
       {/* ═══ HEADLINE ═══ */}
@@ -302,11 +302,11 @@ export const HeroExperience: React.FC<HeroExperienceProps> = ({
                     fontWeight: 700,
                   }}
                 >
-                  100% Verified
+                  Clean Baseline Control
                 </span>
               </div>
               <div style={{ fontSize: '11px', color: '#BCA3A7', marginTop: '4px' }}>
-                Segment distributions reconcile to 100%, row totals cross-checked with 0 anomalies.
+                Clean sample document: arithmetic sums and disclosures evaluate with 0 flagged issues.
               </div>
             </button>
           </div>

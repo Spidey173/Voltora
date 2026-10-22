@@ -324,8 +324,8 @@ export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
       id: 'init_msg',
       role: 'assistant',
       content: isClean
-        ? `### Voltora Autonomous Forensic Copilot\n\nI have completed the automated audit of **${report.doc_name}**.\n\n• **Audit Status:** No discrepancies detected across ${report.summary.pages_analyzed} pages under the evaluated rules (${report.summary.passed_checks_count ?? 0} checks evaluated without contradiction).\n• **Integrity Score:** **${report.summary.health_score}/100 (Grade ${report.summary.grade})**\n\nAsk questions about specific disclosures, verified line items, or schedules in this document.`
-        : `### Voltora Autonomous Forensic Copilot\n\nI have completed the automated audit of **${report.doc_name}**.\n\n• **Integrity Score:** **${report.summary.health_score}/100 (Grade ${report.summary.grade})**\n• **Audit Status:** Flagged **${report.summary.total_issues} discrepancies** across ${report.summary.pages_analyzed} pages (${report.summary.critical_count} Critical, ${report.summary.warning_count} Warnings).\n\nSelect a forensic protocol below or inquire directly regarding variance derivations, footnote reconciliations, or remediation memo drafts.`,
+        ? `### Voltora Document Review Assistant\n\nAutomated rule checks completed for **${report.doc_name}**.\n\n• **Review Status:** No discrepancies detected across ${report.summary.pages_analyzed} pages under the evaluated rules (${report.summary.passed_checks_count ?? 0} checks evaluated without contradiction).\n• **Document Health Score:** **${report.summary.health_score}/100 (Grade ${report.summary.grade})**\n\nAsk questions about specific disclosures, line items, or schedules in this document.`
+        : `### Voltora Document Review Assistant\n\nAutomated rule checks completed for **${report.doc_name}**.\n\n• **Document Health Score:** **${report.summary.health_score}/100 (Grade ${report.summary.grade})**\n• **Review Status:** Flagged **${report.summary.total_issues} potential discrepancies** across ${report.summary.pages_analyzed} pages (${report.summary.critical_count} Critical, ${report.summary.warning_count} Warnings).\n\nSelect a review action below or ask questions regarding derivations, cross-page references, or suggested reconciliations.`,
       timestamp: Date.now(),
       citations: Array.from(new Set(report.issues.map((i) => i.primary_anchor.page))).map((p) => ({
         page: p,
@@ -810,7 +810,7 @@ export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
                         ) : (
                           <>
                             <Sparkles size={11} />
-                            <span>Voltora Forensic Intelligence</span>
+                            <span>Voltora Review Assistant</span>
                           </>
                         )}
                       </div>
@@ -1015,7 +1015,7 @@ export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#FF7036' }}>
                     <Loader2 size={14} className="animate-spin" />
-                    <span style={{ fontWeight: 600 }}>Voltora Forensic Engine Analyzing</span>
+                    <span style={{ fontWeight: 600 }}>Review Assistant Analyzing</span>
                   </div>
                   <div style={{ fontSize: '11px', color: '#BCA3A7' }}>
                     {thinkingMessages[thinkingStep]}
@@ -1071,7 +1071,7 @@ export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
                 <textarea
                   ref={inputRef}
                   rows={2}
-                  placeholder="Ask a forensic question (e.g. 'Reconcile Page 3 revenue', 'Draft 10-K footnote')..."
+                  placeholder="Ask a question about this document (e.g. 'Reconcile Page 3 revenue', 'Explain EBITDA variance')..."
                   value={inputQuery}
                   onChange={(e) => setInputQuery(e.target.value)}
                   onKeyDown={(e) => {

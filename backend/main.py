@@ -27,7 +27,7 @@ logging.basicConfig(
 logger = logging.getLogger("voltora.api")
 
 app = FastAPI(
-    title="Voltora - Autonomous Multi-Dimensional Document Auditor",
+    title="Voltora - Automated Multi-Dimensional Document Auditor",
     description="Deterministic and neuro-symbolic document audit engine with coordinate highlighting",
     version="1.0.0"
 )
@@ -118,7 +118,7 @@ async def upload_document(file: UploadFile = File(...)):
         logger.error("Unexpected error processing document %s: %s", clean_title, e, exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An error occurred while processing the document: {str(e)}"
+            detail="An internal error occurred while parsing and evaluating the document."
         )
 
 @app.get("/api/sample/{sample_name}", response_model=AuditReport)
@@ -137,8 +137,8 @@ def load_sample(sample_name: str):
                 report = doc_store.add_document(content, doc_id=sample_name, title=sample_name.replace("_", " ").title())
                 return report
             except Exception as e:
-                logger.error("Failed to load sample document %s: %s", sample_name, e)
-                raise HTTPException(status_code=500, detail=f"Failed to load sample document: {str(e)}")
+                logger.error("Failed to load sample document %s: %s", sample_name, e, exc_info=True)
+                raise HTTPException(status_code=500, detail="Failed to load and process the sample document.")
         raise HTTPException(status_code=404, detail=f"Sample document '{sample_name}' not found.")
     return report
 

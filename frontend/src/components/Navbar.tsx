@@ -303,7 +303,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={onExportMemo}
                 className="btn-secondary"
                 style={{ padding: '6px 10px', fontSize: '12px' }}
-                title="Export Forensic Audit Memorandum"
+                title="Export Document Review Memorandum"
               >
                 <Download size={13} color="#FFA133" />
                 <span>Export Memo</span>

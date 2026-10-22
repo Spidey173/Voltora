@@ -910,10 +910,10 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
                                   gap: '3px',
                                   cursor: 'pointer',
                                 }}
-                                title="Open Deep Forensic AI Investigation Drawer"
+                                title="Open Review Assistant Investigation Drawer"
                               >
                                 <Sparkles size={11} />
-                                <span>Deep Audit</span>
+                                <span>Deep Review</span>
                               </button>
                             )}
                           </div>
@@ -934,13 +934,13 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
                         >
                           {chatState.answer ? (
                             <div style={{ fontSize: '11px', color: '#FFF1EE', lineHeight: 1.4, marginBottom: '6px' }}>
-                              <div style={{ fontWeight: 600, color: '#FF7036', marginBottom: '2px' }}>Voltora Forensic Copilot:</div>
+                              <div style={{ fontWeight: 600, color: '#FF7036', marginBottom: '2px' }}>Voltora Review Assistant:</div>
                               <div>{chatState.answer}</div>
                             </div>
                           ) : chatState.loading ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#FF7036', padding: '4px 0' }}>
                               <Loader2 size={12} className="animate-spin" />
-                              <span>Reconciling forensic disclosures...</span>
+                              <span>Reconciling disclosures...</span>
                             </div>
                           ) : null}
 

@@ -64,5 +64,32 @@ class TestUploadValidation(unittest.TestCase):
         self.assertEqual(data["summary"]["pages_analyzed"], 1)
 
 
+    def test_reject_excessive_page_count(self):
+        """Reject PDF exceeding the 100-page limit with 400 Bad Request."""
+        doc = fitz.open()
+        for i in range(101):
+            p = doc.new_page()
+            p.insert_text((50, 50), f"Page {i + 1}")
+        pdf_bytes = doc.tobytes()
+        doc.close()
+
+        files = {"file": ("long_document.pdf", pdf_bytes, "application/pdf")}
+        res = self.client.post("/api/upload", files=files)
+        self.assertEqual(res.status_code, 400)
+        self.assertIn("exceeds the supported limit of 100 pages", res.json()["detail"])
+
+    def test_sanitized_internal_error_does_not_leak_stack(self):
+        """Ensure unhandled internal errors return sanitized messages, not raw exception traces."""
+        # Force an internal error in sample loading by monkeypatching
+        from unittest.mock import patch
+        from backend.services.doc_service import doc_store
+
+        with patch.object(doc_store, "add_document", side_effect=RuntimeError("internal_db_syntax_leak_error")):
+            res = self.client.get("/api/sample/acme_fy24_annual_report")
+            self.assertEqual(res.status_code, 500)
+            self.assertEqual(res.json()["detail"], "Failed to load and process the sample document.")
+            self.assertNotIn("internal_db_syntax_leak_error", res.json()["detail"])
+
+
 if __name__ == "__main__":
     unittest.main()

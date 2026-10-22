@@ -261,15 +261,17 @@ def run_evaluation() -> Dict[str, Any]:
 
     avg_latency_per_page = total_time_ms / max(1, total_pages)
     summary_panel = Panel(
-        f"[bold green]Micro Precision:[/bold green] {micro_prec:.1f}%\n"
-        f"[bold green]Micro Recall:[/bold green] {micro_rec:.1f}%\n"
-        f"[bold magenta]Micro F1-Score:[/bold magenta] {micro_f1:.1f}%\n"
-        f"[bold cyan]Macro F1-Score:[/bold cyan] {macro_f1:.1f}%\n"
-        f"[bold yellow]Clean Documents Tested:[/bold yellow] {clean_docs_count} (False alarms: {clean_doc_false_positives})\n"
+        f"[bold cyan]Evaluation Methodology:[/bold cyan] Strict 1-to-1 match (category + page + min_matches + required_any anchors)\n"
+        f"[bold white]Documents Tested:[/bold white] {len(doc_results)} ({total_pages} total pages)\n"
+        f"[bold white]Ground-Truth Issues:[/bold white] {total_tp + total_fn} | [bold green]Detected Matches (TP):[/bold green] {total_tp}\n"
+        f"[bold yellow]False Positives (FP):[/bold yellow] {total_fp} | [bold red]False Negatives (FN):[/bold red] {total_fn}\n"
+        f"[bold green]Micro Precision:[/bold green] {micro_prec:.1f}% | [bold green]Micro Recall:[/bold green] {micro_rec:.1f}%\n"
+        f"[bold magenta]Micro F1-Score:[/bold magenta] {micro_f1:.1f}% | [bold cyan]Macro F1-Score:[/bold cyan] {macro_f1:.1f}%\n"
+        f"[bold yellow]Clean Baseline Controls:[/bold yellow] {clean_docs_count} tested ({clean_doc_false_positives} false alarms)\n"
         f"[bold yellow]Skipped Documents:[/bold yellow] {len(skipped_docs)}\n"
-        f"[bold cyan]Avg Latency / Page:[/bold cyan] {avg_latency_per_page:.1f} ms\n"
-        f"[bold white]Total Pages Evaluated:[/bold white] {total_pages}",
-        title="[bold white]Benchmark Performance Summary[/bold white]",
+        f"[bold cyan]Avg Latency / Page:[/bold cyan] {avg_latency_per_page:.1f} ms\n\n"
+        f"[dim white]Scope: Software regression test suite evaluated on generated test filings.[/dim white]",
+        title="[bold white]Synthetic Benchmark Evaluation Summary[/bold white]",
         border_style="cyan"
     )
     console.print(summary_panel)
