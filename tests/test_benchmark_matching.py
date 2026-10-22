@@ -152,7 +152,68 @@ class TestBenchmarkMatching(unittest.TestCase):
             page=1,
             sec_page=4,
         )
-        self.assertTrue(matches_ground_truth(issue_cross, gt))
+    def test_weak_evidence_single_generic_keyword_rejected(self):
+        """A finding matching category and page but having only 1 generic keyword must fail when min_matches=2."""
+        gt = {
+            "id": "gt_math_01",
+            "category": "math_discrepancy",
+            "page": 3,
+            "description": "Component sum $145M fails to tie to $165M",
+            "evidence_keywords": ["165", "145", "product sales", "revenue"],
+            "required_any": ["165", "145", "product sales"],
+            "min_matches": 2,
+        }
+        # Only contains generic "revenue", but misses numbers and only matches 1 keyword
+        issue = make_issue(
+            "iss_weak_1",
+            "Math Discrepancy",
+            "General revenue variance between periods",
+            IssueCategory.MATH,
+            page=3,
+        )
+        self.assertFalse(matches_ground_truth(issue, gt))
+
+    def test_weak_evidence_missing_required_anchor_rejected(self):
+        """A finding matching multiple context keywords but missing the required anchor values must fail."""
+        gt = {
+            "id": "gt_math_01",
+            "category": "math_discrepancy",
+            "page": 3,
+            "description": "Component sum $145M fails to tie to $165M",
+            "evidence_keywords": ["165", "145", "product sales", "revenue"],
+            "required_any": ["165", "145", "product sales"],
+            "min_matches": 2,
+        }
+        # Matches "revenue" and another word, but has neither 165 nor 145 nor product sales
+        issue = make_issue(
+            "iss_weak_2",
+            "Math Discrepancy",
+            "Revenue and other revenue line items show rounding differences",
+            IssueCategory.MATH,
+            page=3,
+        )
+        self.assertFalse(matches_ground_truth(issue, gt))
+
+    def test_strong_evidence_with_wording_variations_passes(self):
+        """A finding with natural phrasing differences that includes key figures and context passes."""
+        gt = {
+            "id": "gt_math_01",
+            "category": "math_discrepancy",
+            "page": 3,
+            "description": "Component sum $145M fails to tie to $165M",
+            "evidence_keywords": ["165", "145", "product sales", "revenue"],
+            "required_any": ["165", "145", "product sales"],
+            "min_matches": 2,
+        }
+        # Phrasing differs from description but contains key anchors and context
+        issue = make_issue(
+            "iss_strong",
+            "Column Sum Variance",
+            "Recalculation of consolidated revenue segments yielded 145.00 against published total 165.00",
+            IssueCategory.MATH,
+            page=3,
+        )
+        self.assertTrue(matches_ground_truth(issue, gt))
 
 
 if __name__ == "__main__":

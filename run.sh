@@ -29,7 +29,7 @@ print_banner() {
   echo "    ╚═══╝   ╚═════╝ ╚══════╝╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝"
   echo -e "${NC}"
   echo -e "  ${VIOLET}${BOLD}⚡ Autonomous Multi-Dimensional Document Auditor${NC}"
-  echo -e "  ${CYAN}Zero Hallucination • Coordinate Anchors • Groq Neuro-Symbolic${NC}"
+  echo -e "  ${CYAN}Evidence-Grounded • Coordinate Anchors • Groq Neuro-Symbolic${NC}"
   echo "  ─────────────────────────────────────────────────────────────"
 }
 

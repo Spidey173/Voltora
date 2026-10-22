@@ -53,9 +53,19 @@ def matches_ground_truth(det, exp: Dict[str, Any]) -> bool:
             det.explanation or ""
         ]).lower()
 
-        # At least one key evidence keyword must be present
-        if not any(kw.lower() in finding_blob for kw in keywords):
+        matched_keywords = [kw for kw in keywords if kw.lower() in finding_blob]
+
+        # Require a threshold of matched keywords (default 2 when multiple keywords provided, else 1)
+        min_matches = exp.get("min_matches", 2 if len(keywords) >= 2 else 1)
+        if len(matched_keywords) < min_matches:
             return False
+
+        # If specific identifying anchors are designated (e.g. specific numbers or unique entity names),
+        # at least one specific anchor must be present to prevent generic topic overlap.
+        required_any = exp.get("required_any", [])
+        if required_any:
+            if not any(req.lower() in finding_blob for req in required_any):
+                return False
 
     return True
 

@@ -1,57 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Sparkles, Check, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2, Info } from 'lucide-react';
 
 interface AnalysisModalProps {
   isOpen: boolean;
   docName?: string;
 }
 
-const auditSteps = [
-  { id: 'ocr', label: 'Extracting text, tables, and layout', sub: 'Parsing vector geometry and high-resolution elements' },
-  { id: 'entities', label: 'Parsing numerical figures, units, and currencies', sub: 'Standardizing millions, billions, and currencies' },
-  { id: 'matrices', label: 'Reconstructing balance sheets and income tables', sub: 'Building structured financial statement matrices' },
-  { id: 'math', label: 'Auditing arithmetic row sums and column totals', sub: 'Cross-footing subtotals and checking percentage splits' },
-  { id: 'nli', label: 'Cross-referencing claims across all pages', sub: 'Detecting contradictions between narratives and tables' },
-  { id: 'highlights', label: 'Compiling audit report and visual evidence', sub: 'Pinpointing exact bounding box coordinates for each issue' },
-];
-
 export const AnalysisModal: React.FC<AnalysisModalProps> = ({ isOpen, docName }) => {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [progressPercent, setProgressPercent] = useState(15);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setCurrentStepIndex(0);
-      setProgressPercent(15);
-      return;
-    }
-
-    const stepInterval = setInterval(() => {
-      setCurrentStepIndex((prev) => {
-        if (prev < auditSteps.length - 1) {
-          return prev + 1;
-        }
-        return prev;
-      });
-    }, 800);
-
-    const progressInterval = setInterval(() => {
-      setProgressPercent((prev) => {
-        if (prev < 98) {
-          const delta = Math.floor(Math.random() * 5) + 3;
-          return Math.min(98, prev + delta);
-        }
-        return prev;
-      });
-    }, 200);
-
-    return () => {
-      clearInterval(stepInterval);
-      clearInterval(progressInterval);
-    };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
   return (
@@ -73,7 +29,7 @@ export const AnalysisModal: React.FC<AnalysisModalProps> = ({ isOpen, docName })
           className="clean-panel"
           style={{
             width: '100%',
-            maxWidth: '560px',
+            maxWidth: '520px',
             backgroundColor: '#140E11',
             border: '1px solid rgba(255, 120, 80, 0.22)',
             borderRadius: '16px',
@@ -83,165 +39,119 @@ export const AnalysisModal: React.FC<AnalysisModalProps> = ({ isOpen, docName })
           }}
         >
           {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div
-                style={{
-                  width: '42px',
-                  height: '42px',
-                  borderRadius: '10px',
-                  background: 'linear-gradient(135deg, rgba(255, 56, 56, 0.18) 0%, rgba(255, 161, 51, 0.18) 100%)',
-                  border: '1px solid rgba(255, 120, 80, 0.35)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#FF7036',
-                  boxShadow: '0 2px 10px rgba(255, 90, 31, 0.2)',
-                }}
-              >
-                <Sparkles size={20} />
-              </div>
-              <div>
-                <h3
-                  className="font-heading"
-                  style={{ fontSize: '17px', fontWeight: 700, color: '#FFF1EE', marginBottom: '4px' }}
-                >
-                  Auditing Document...
-                </h3>
-                <p style={{ fontSize: '13px', color: '#BCA3A7' }}>
-                  {docName ? `Analyzing ${docName}` : 'Checking arithmetic and cross-page consistency'}
-                </p>
-              </div>
-            </div>
-
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '20px' }}>
             <div
-              className="font-heading"
               style={{
-                fontSize: '18px',
-                fontWeight: 700,
-                color: '#FFA87D',
-                backgroundColor: 'rgba(255, 90, 31, 0.12)',
-                border: '1px solid rgba(255, 90, 31, 0.25)',
-                padding: '4px 12px',
-                borderRadius: '8px',
+                width: '42px',
+                height: '42px',
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, rgba(255, 56, 56, 0.18) 0%, rgba(255, 161, 51, 0.18) 100%)',
+                border: '1px solid rgba(255, 120, 80, 0.35)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#FF7036',
+                boxShadow: '0 2px 10px rgba(255, 90, 31, 0.2)',
               }}
             >
-              {progressPercent}%
+              <Sparkles size={20} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h3
+                className="font-heading"
+                style={{ fontSize: '17px', fontWeight: 700, color: '#FFF1EE', marginBottom: '4px' }}
+              >
+                Auditing Document
+              </h3>
+              <p
+                style={{
+                  fontSize: '13px',
+                  color: '#BCA3A7',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {docName ? `Analyzing ${docName}` : 'Evaluating document evidence'}
+              </p>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: 'rgba(255, 90, 31, 0.12)',
+                border: '1px solid rgba(255, 90, 31, 0.25)',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                color: '#FFA87D',
+                fontSize: '12px',
+                fontWeight: 600,
+              }}
+            >
+              <Loader2 size={13} className="animate-spin" color="#FF7036" />
+              <span>Processing</span>
             </div>
           </div>
 
-          {/* Clean Progress Bar with Magma Lava Sunset Gradient */}
+          {/* Indeterminate Activity Bar */}
           <div
             style={{
               width: '100%',
-              height: '6px',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              height: '4px',
+              backgroundColor: 'rgba(255, 255, 255, 0.06)',
               borderRadius: '9999px',
               overflow: 'hidden',
-              marginBottom: '24px',
+              marginBottom: '20px',
+              position: 'relative',
             }}
           >
             <div
               style={{
                 height: '100%',
+                width: '40%',
                 background: 'linear-gradient(90deg, #FF3838 0%, #FF5A1F 60%, #FFA133 100%)',
-                width: `${progressPercent}%`,
                 borderRadius: '9999px',
                 boxShadow: '0 0 12px rgba(255, 90, 31, 0.6)',
-                transition: 'width 0.2s ease-out',
+                animation: 'pulse 1.4s ease-in-out infinite',
               }}
             />
           </div>
 
-          {/* Steps List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
-            {auditSteps.map((step, idx) => {
-              const isDone = idx < currentStepIndex;
-              const isCurrent = idx === currentStepIndex;
-
-              return (
-                <div
-                  key={step.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    backgroundColor: isCurrent ? 'rgba(255, 90, 31, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-                    border: isCurrent ? '1px solid rgba(255, 90, 31, 0.3)' : '1px solid rgba(255, 120, 80, 0.08)',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: isDone
-                          ? 'rgba(16, 185, 129, 0.15)'
-                          : isCurrent
-                          ? 'rgba(255, 90, 31, 0.2)'
-                          : 'rgba(255, 255, 255, 0.05)',
-                      }}
-                    >
-                      {isDone ? (
-                        <Check size={12} color="#10B981" />
-                      ) : isCurrent ? (
-                        <Loader2 size={12} color="#FF7036" className="animate-spin" />
-                      ) : (
-                        <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#806B70' }} />
-                      )}
-                    </div>
-
-                    <div>
-                      <div
-                        style={{
-                          fontSize: '13px',
-                          color: isDone ? '#FFF1EE' : isCurrent ? '#FFFFFF' : '#BCA3A7',
-                          fontWeight: isCurrent || isDone ? 600 : 400,
-                        }}
-                      >
-                        {step.label}
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#806B70', marginTop: '1px' }}>
-                        {step.sub}
-                      </div>
-                    </div>
-                  </div>
-
-                  <span
-                    style={{
-                      fontSize: '11px',
-                      color: isDone ? '#10B981' : isCurrent ? '#FF7036' : '#806B70',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {isDone ? 'Complete' : isCurrent ? 'Running...' : 'Queued'}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Footer */}
+          {/* Truthful Status Card */}
           <div
             style={{
-              paddingTop: '16px',
+              backgroundColor: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(255, 120, 80, 0.10)',
+              borderRadius: '10px',
+              padding: '16px',
+              marginBottom: '20px',
+            }}
+          >
+            <div style={{ fontSize: '13px', color: '#FFF1EE', fontWeight: 600, marginBottom: '6px' }}>
+              Synchronous Audit in Progress
+            </div>
+            <p style={{ fontSize: '12px', color: '#BCA3A7', lineHeight: 1.55, margin: 0 }}>
+              The backend is parsing PDF layout vectors, extracting financial tables, and evaluating deterministic arithmetic, semantic claim consistency, milestone chronology, and unit scale rules.
+            </p>
+          </div>
+
+          {/* Footer Note documenting synchronous flow */}
+          <div
+            style={{
+              paddingTop: '14px',
               borderTop: '1px solid rgba(255, 120, 80, 0.12)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              fontSize: '12px',
-              color: '#BCA3A7',
+              gap: '8px',
+              fontSize: '11px',
+              color: '#806B70',
             }}
           >
-            <span>Deterministic mathematical & semantic cross-checks</span>
-            <span style={{ color: '#FFA87D', fontWeight: 500 }}>High-precision audit</span>
+            <Info size={13} color="#806B70" style={{ flexShrink: 0 }} />
+            <span>
+              Audits execute synchronously on the server in a single pass. Results display immediately upon completion.
+            </span>
           </div>
         </div>
       </div>

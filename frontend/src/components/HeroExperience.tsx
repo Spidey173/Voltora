@@ -6,6 +6,7 @@ import {
   ArrowRightLeft,
   FileCheck2,
   Flame,
+  Lock,
 } from 'lucide-react';
 
 interface HeroExperienceProps {
@@ -185,12 +186,38 @@ export const HeroExperience: React.FC<HeroExperienceProps> = ({
             color: '#806B70',
           }}
         >
-          <span>⚡ Audit in &lt;100ms</span>
+          <span>⚡ Fast Synchronous Audit</span>
           <span>•</span>
-          <span>🔒 100% Private</span>
+          <span>🔒 Local Session Storage</span>
           <span>•</span>
           <span>📍 Linked PDF Pin Highlights</span>
         </div>
+      </div>
+
+      {/* ═══ SINGLE-USER & LOCAL DEPLOYMENT ADVISORY ═══ */}
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '640px',
+          marginTop: '16px',
+          marginBottom: '28px',
+          padding: '10px 14px',
+          backgroundColor: 'rgba(255, 120, 80, 0.06)',
+          border: '1px solid rgba(255, 120, 80, 0.18)',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          fontSize: '11px',
+          color: '#BCA3A7',
+          lineHeight: 1.45,
+          textAlign: 'left',
+        }}
+      >
+        <Lock size={14} color="#FF7036" style={{ flexShrink: 0 }} />
+        <span>
+          <strong style={{ color: '#FFE7E3' }}>Local Single-User Notice:</strong> Voltora runs in-memory without user authentication or tenant isolation. It is intended solely for local desktop review and should not be hosted on public networks with confidential documents.
+        </span>
       </div>
 
       {/* ═══ 1-CLICK INSTANT SAMPLES FOR PRO AUDITING ═══ */}

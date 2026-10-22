@@ -7,6 +7,7 @@ import {
   Activity,
   Download,
   X,
+  Lock,
 } from 'lucide-react';
 import type { AuditReport } from '../types';
 
@@ -104,6 +105,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               }}
             >
               Auditor
+            </span>
+            <span
+              style={{
+                fontSize: '10px',
+                color: '#BCA3A7',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 120, 80, 0.16)',
+                padding: '1px 6px',
+                borderRadius: '4px',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '3px',
+              }}
+              title="Local Single-User Architecture: No authentication or multi-tenant isolation. Intended for local desktop use."
+            >
+              <Lock size={9} color="#FF7036" />
+              <span>Single-User</span>
             </span>
           </div>
         </div>

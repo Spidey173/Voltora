@@ -29,7 +29,10 @@
 Voltora includes an automated evaluation suite (`eval/run_benchmark.py`) that evaluates findings against an annotated ground-truth dataset (`eval/ground_truth.py`).
 
 ### Scoring Methodology
-- **Strict 1-to-1 Matching**: A detected issue only matches an expected issue if its category matches, primary (and secondary, if cross-page) page matches, and key evidence tokens are present in the finding.
+- **Strict 1-to-1 Matching**: A detected issue matches ground truth only if:
+  1. Category matches exactly (`math_discrepancy`, `semantic_contradiction`, `temporal_inversion`, `unit_mismatch`).
+  2. Page matches primary page (and secondary page for cross-page contradictions).
+  3. Evidence is sufficiently specific: requires meeting a minimum keyword threshold (`min_matches`) and matching at least one specific identifying anchor (`required_any`, e.g. exact numerical figures or unique initiative name). Generic terms (e.g. matching only "revenue" or "prior") are rejected, while natural phrasing differences across finding descriptions, quotes, and derivations are supported.
 - **Micro & Macro Metrics**: Reports precision, recall, and F1 per category, along with micro-averages (pooled counts) and macro-averages (unweighted category mean).
 - **Clean Document Testing**: Tracks false-positive detections on clean baseline controls (0 expected issues).
 - **Skipped Tracking**: Explicitly reports any missing or unreadable test files.
@@ -62,10 +65,16 @@ Evaluated across **4 test documents (10 pages total)**:
 
 ## 🔒 Security & Deployment Architecture
 
-- **Single-User / Local Session Architecture**:
-  Voltora's backend utilizes an in-memory document store (`DocumentStore`) scoped to the active application runtime. Document IDs are generated via random UUIDs, but the application does not implement authentication, role-based access control, or multi-tenant workspace isolation.
-- **Upload Hardening**:
-  Uploads are validated for `.pdf` file extension, standard `%PDF-` file magic bytes, an upload size limit of 25MB, and a maximum page limit of 100 pages. Malformed or corrupted PDFs return structured 400 Bad Request responses.
+> [!CAUTION]
+> **Local Single-User Architecture**:  
+> The backend operates an in-memory document session store and does not implement user authentication, role-based access control, or multi-tenant workspace isolation. Voltora is intended solely for local desktop review by an individual analyst. **It must not be exposed to public networks or untrusted multi-user environments with confidential documents.**
+
+- **CORS Restriction**:  
+  Wildcard origins (`*`) are disallowed. Allowed frontend origins are read from the `FRONTEND_ORIGINS` environment variable (comma-separated list). When unspecified, it safely defaults to local development origins (`http://localhost:5173`, `http://127.0.0.1:5173`, `http://localhost:3000`, `http://127.0.0.1:3000`).
+- **Synchronous Execution Model**:  
+  Document ingestion and multi-pass rule evaluation execute synchronously on the server in a single HTTP request pass (~50-150ms). The UI displays a truthful processing indicator while the request is in flight rather than simulating multi-stage progress bars.
+- **Upload Hardening**:  
+  Uploads are validated for `.pdf` file extension, standard `%PDF-` file magic bytes, an upload size limit of 25MB, and a maximum page limit of 100 pages. Malformed or corrupted PDFs return structured 400 Bad Request responses. Directory traversal attempts on sample document endpoints are blocked.
 
 ---
 

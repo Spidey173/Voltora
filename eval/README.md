@@ -40,7 +40,11 @@ Scoring uses strict **1-to-1 matching** between ground-truth annotations and det
 2. **Page & Coordinate Grounding**:
    - Single-page findings must match the expected primary page.
    - Cross-page findings must match both the primary and secondary pages.
-3. **Evidence Verification**: The finding's anchor text, title, or calculated variance must contain the ground-truth's verified evidence tokens or values.
+3. **Specific Evidence Verification**:
+   - Does not accept a match on a single generic word (e.g. matching only "revenue" or "prior" without identifying figures).
+   - Requires matching a minimum number of evidence keywords (`min_matches`, defaulting to at least 2 when multiple keywords are defined).
+   - Requires matching at least one specific identifying anchor (`required_any`), such as the exact numerical figures or unique initiative name.
+   - Allows natural phrasing variations by inspecting the aggregated finding context (title, description, anchor quotes, values, and derivation explanation).
 4. **No Double-Counting**: Each detected finding can match at most one ground-truth item, and each ground-truth item can be satisfied at most once.
 5. **False Positives on Clean Controls**: Any finding emitted on designated clean documents is strictly tracked and penalized as a false positive.
 6. **Averaging**:
@@ -69,7 +73,9 @@ To expand the evaluation suite with new documents:
                  "page": 1,                      # 1-indexed primary page
                  "secondary_page": 3,            # Optional 1-indexed secondary page
                  "description": "Concise human explanation of the expected discrepancy",
-                 "evidence_keywords": ["keyword1", "120M"] # Critical tokens that must be grounded
+                 "evidence_keywords": ["145", "165", "product sales", "revenue"], # Multi-token context
+                 "required_any": ["145", "165", "product sales"],                # Specific identifying anchors
+                 "min_matches": 2                                                # Minimum keyword threshold
              }
          ]
      }

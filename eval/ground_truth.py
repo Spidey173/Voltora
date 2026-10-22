@@ -12,14 +12,18 @@ GROUND_TRUTH_DATASET = [
                 "category": "math_discrepancy",
                 "page": 3,
                 "description": "Table summation mismatch in FY2024 column (stated 165 vs sum 145)",
-                "evidence_keywords": ["165", "145", "product sales", "revenue"]
+                "evidence_keywords": ["165", "145", "product sales", "revenue"],
+                "required_any": ["165", "145", "product sales"],
+                "min_matches": 2
             },
             {
                 "id": "acme_math_pct_dist",
                 "category": "math_discrepancy",
                 "page": 2,
                 "description": "Percentage distribution sum (40+30+20=90% != 100%)",
-                "evidence_keywords": ["40", "30", "20", "90", "distribution", "allocation"]
+                "evidence_keywords": ["40", "30", "20", "90", "distribution", "allocation"],
+                "required_any": ["40", "30", "20", "90"],
+                "min_matches": 2
             },
             {
                 "id": "acme_sem_revenue_growth",
@@ -27,7 +31,9 @@ GROUND_TRUTH_DATASET = [
                 "page": 1,
                 "secondary_page": 3,
                 "description": "Revenue growth mismatch (12% vs 14%)",
-                "evidence_keywords": ["12", "14", "revenue", "growth"]
+                "evidence_keywords": ["12", "14", "revenue", "growth"],
+                "required_any": ["12", "14"],
+                "min_matches": 2
             },
             {
                 "id": "acme_sem_debt_status",
@@ -35,7 +41,9 @@ GROUND_TRUTH_DATASET = [
                 "page": 1,
                 "secondary_page": 3,
                 "description": "Zero debt vs $120M debt notes issued",
-                "evidence_keywords": ["debt", "credit"]
+                "evidence_keywords": ["debt", "credit"],
+                "required_any": ["debt", "credit"],
+                "min_matches": 2
             },
             {
                 "id": "acme_sem_foreign_subsidiaries",
@@ -43,14 +51,18 @@ GROUND_TRUTH_DATASET = [
                 "page": 1,
                 "secondary_page": 2,
                 "description": "No international operations vs subsidiaries in Europe and Asia",
-                "evidence_keywords": ["subsidiari", "international", "foreign", "domestic"]
+                "evidence_keywords": ["subsidiari", "international", "foreign", "domestic"],
+                "required_any": ["subsidiari", "international", "foreign"],
+                "min_matches": 2
             },
             {
                 "id": "acme_temp_period_inversion",
                 "category": "temporal_inversion",
                 "page": 1,
                 "description": "Prior year 2024 compared to 2023 inversion",
-                "evidence_keywords": ["2024", "2023", "prior"]
+                "evidence_keywords": ["2024", "2023", "prior"],
+                "required_any": ["2024", "2023"],
+                "min_matches": 2
             },
             {
                 "id": "acme_temp_project_genesis",
@@ -58,7 +70,9 @@ GROUND_TRUTH_DATASET = [
                 "page": 2,
                 "secondary_page": 2,
                 "description": "Project Genesis completion (March 2023) precedes kickoff date (November 2023)",
-                "evidence_keywords": ["genesis"]
+                "evidence_keywords": ["genesis"],
+                "required_any": ["genesis"],
+                "min_matches": 1
             },
             {
                 "id": "acme_unit_opex_scale",
@@ -66,7 +80,9 @@ GROUND_TRUTH_DATASET = [
                 "page": 2,
                 "secondary_page": 4,
                 "description": "Operating expenses $42.5B (Page 2) vs $42.5M (Page 4) scale mismatch",
-                "evidence_keywords": ["42.5", "expense", "expenditure", "scale"]
+                "evidence_keywords": ["42.5", "expense", "expenditure", "scale"],
+                "required_any": ["42.5"],
+                "min_matches": 2
             }
         ]
     },
@@ -86,7 +102,9 @@ GROUND_TRUTH_DATASET = [
                 "category": "math_discrepancy",
                 "page": 1,
                 "description": "Stated 25% growth from 80 to 120 (actual is 50%)",
-                "evidence_keywords": ["25", "80", "120", "growth", "margin"]
+                "evidence_keywords": ["25", "80", "120", "growth", "margin"],
+                "required_any": ["25", "80", "120"],
+                "min_matches": 2
             },
             {
                 "id": "vertex_temp_project_titan",
@@ -94,7 +112,9 @@ GROUND_TRUTH_DATASET = [
                 "page": 1,
                 "secondary_page": 1,
                 "description": "Project Titan completion (Feb 2024) precedes kickoff (Aug 2024)",
-                "evidence_keywords": ["titan"]
+                "evidence_keywords": ["titan"],
+                "required_any": ["titan"],
+                "min_matches": 1
             }
         ]
     },

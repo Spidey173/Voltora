@@ -32,12 +32,26 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for frontend
+# Restrict CORS to allowed frontend origins read from FRONTEND_ORIGINS (or fallback to safe local development origins).
+# Wildcard origins are explicitly disallowed to prevent unauthorized cross-origin requests.
+DEFAULT_FRONTEND_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+env_origins = os.getenv("FRONTEND_ORIGINS", "")
+allowed_origins = (
+    [origin.strip() for origin in env_origins.split(",") if origin.strip() and origin.strip() != "*"]
+    if env_origins.strip()
+    else DEFAULT_FRONTEND_ORIGINS
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
