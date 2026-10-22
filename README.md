@@ -17,7 +17,7 @@
 - **Does not replace certified accounting or audit judgment**: Voltora does not perform statutory audits, provide legal opinions, or guarantee compliance with GAAP/IFRS.
 - **Does not claim full document verification**: A document with zero flagged issues only means that none of the evaluated rules were triggered; it is not a certification of overall accuracy.
 - **Does not support multi-tenant public deployment**: There is no authentication, role-based access control (RBAC), or database tenant isolation. It is engineered strictly for single-user local analyst workflows.
-- **Does not generalize benchmark scores to arbitrary real-world filings**: The benchmark suite is a software regression test evaluating 10 programmed findings across 4 synthetic test PDFs.
+- **Does not generalize benchmark scores to arbitrary real-world filings**: The benchmark suite is a software regression test evaluating 12 programmed findings across 5 synthetic test PDFs.
 
 ---
 
@@ -59,31 +59,39 @@
 
 3. **Synchronous Execution Model Over Simulated Progress:**
    - *Problem:* Many prototypes use `setInterval` or randomized progress bars to create the illusion of complex asynchronous background jobs.
-   - *Decision:* Document ingestion and multi-pass rule evaluation execute synchronously on the server in ~50-150ms. The application truthfully displays an active loading state while the single HTTP request is in-flight and immediately renders the results upon response.
+   - *Decision:* Document ingestion and multi-pass rule evaluation execute synchronously on the server in ~50-150ms. The application truthfully displays an active loading state while the single HTTP request is in-flight and immediately renders the results upon response without artificial delays.
 
 ---
 
-## 📊 Benchmark Suite & Empirical Results
+## 🧪 Synthetic Regression Test Suite & Benchmark Reproduction
 
-Voltora includes an automated evaluation suite (`eval/run_benchmark.py`) that evaluates findings against an annotated ground-truth dataset (`eval/ground_truth.py`).
+Voltora includes an automated evaluation suite (`eval/run_benchmark.py`) that tests the audit engine against an annotated ground-truth dataset (`eval/ground_truth.py`).
 
-### Scoring Methodology
-- **Strict 1-to-1 Matching**: A detected issue matches ground truth only if:
-  1. Category matches exactly (`math_discrepancy`, `semantic_contradiction`, `temporal_inversion`, `unit_mismatch`).
-  2. Page matches primary page (and secondary page for cross-page contradictions).
-  3. Evidence is sufficiently specific: requires meeting a minimum keyword threshold (`min_matches`) and matching at least one specific identifying anchor (`required_any`, e.g. exact numerical figures or unique initiative name). Generic terms (e.g. matching only "revenue" or "prior") are rejected, while natural phrasing differences across finding descriptions, quotes, and derivations are supported.
-- **Micro & Macro Metrics**: Reports precision, recall, and F1 per category, along with micro-averages (pooled counts) and macro-averages (unweighted category mean).
-- **Clean Document Testing**: Tracks false-positive detections on clean baseline controls (0 expected issues).
-- **Skipped Tracking**: Explicitly reports any missing or unreadable test files.
+> [!NOTE]
+> **Scope & Interpretation:**  
+> This benchmark is a software regression test suite evaluated on programmatically generated examples. The 100% precision/recall score reflects that all 12 injected test patterns are correctly identified under strict matching rules without triggering false alarms on clean controls. It validates rule correctness on programmed cases—**it does not represent measured accuracy on uncurated, heterogeneous real-world filings.**
 
-### Current Evaluation Results (Synthetic Test Corpus)
+### How to Reproduce
+Run the benchmark directly from the repository root:
+```bash
+python -m eval.run_benchmark
+```
 
-Evaluated across **5 test documents (12 pages total)**:
+### Test Dataset & Evaluation Criteria
+Evaluated across **5 synthetic test documents (12 pages total)**:
 - `acme_fy24_annual_report.pdf` (4 pages, 8 injected multi-dimensional issues)
-- `clean_financial_statement.pdf` (3 pages, clean baseline control)
+- `clean_financial_statement.pdf` (3 pages, clean baseline control — 0 expected issues)
 - `vertex_energy_audit.pdf` (2 pages, 2 injected issues + clean tables)
-- `nova_clean_quarterly.pdf` (1 page, clean baseline control)
+- `nova_clean_quarterly.pdf` (1 page, clean baseline control — 0 expected issues)
 - `solaris_edge_cases.pdf` (2 pages, 2 injected issues + negative values schedule)
+
+**Strict 1-to-1 Matching Rules**:
+1. Category must match exactly (`math_discrepancy`, `semantic_contradiction`, `temporal_inversion`, `unit_mismatch`).
+2. Primary page (and secondary page for cross-page contradictions) must match.
+3. Must match multiple keywords (`min_matches >= 2`) and at least one specific identifying anchor (`required_any`, e.g. exact numeric figures or unique initiative name). Single generic words (e.g. matching only "revenue") are rejected.
+4. Clean baseline documents are monitored: any detection on clean documents is penalized as a false positive.
+
+### Regression Suite Results (Reproducible from Current Code)
 
 | Audit Category | Ground Truth | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Precision | Recall | F1-Score |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -94,12 +102,9 @@ Evaluated across **5 test documents (12 pages total)**:
 | **MICRO AVERAGE** | **12** | **12** | **0** | **0** | **100.0%** | **100.0%** | **100.0%** |
 | **MACRO AVERAGE** | **12** | **-** | **-** | **-** | **100.0%** | **100.0%** | **100.0%** |
 
-- **Clean Document False-Alarm Count**: `0` across 2 clean control documents.
-- **Skipped Documents**: `0`
-- **Average Processing Throughput**: `~62 ms` per page.
-
-> **Evaluation Limitations**:  
-> Benchmark metrics are measured on a programmatically generated synthetic corpus designed for unit and integration testing. These results demonstrate rule verification correctness on modeled patterns, but do not represent measured accuracy on heterogeneous, uncurated real-world filings or complex accounting edge cases.
+- **Clean Baseline Controls Tested**: 2 documents (0 false alarms).
+- **Skipped Documents**: 0
+- **Average Processing Latency**: ~62 ms per page.
 
 ---
 
@@ -187,11 +192,11 @@ Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 source .venv/bin/activate
 python -m eval.run_benchmark
 ```
-Runs the strict 1-to-1 regression evaluation across all 4 synthetic test PDFs and updates `eval/benchmark_results.json`.
+Runs the strict 1-to-1 regression evaluation across all 5 synthetic test PDFs and updates `eval/benchmark_results.json`.
 
 ### 4. Run Test Suite
 ```bash
 source .venv/bin/activate
 python -m unittest discover tests
 ```
-Runs the full Python unit and integration test suite (26 tests).
+Runs the full Python unit and integration test suite (31 tests).

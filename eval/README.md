@@ -95,6 +95,6 @@ To expand the evaluation suite with new documents:
 
 ## 4. Known Evaluation Limitations
 
-- **Corpus Size**: 4 synthetic documents (10 pages total). A larger corpus spanning diverse industry disclosures, multi-column layouts, and scanned OCR documents is necessary to evaluate generalization.
+- **Corpus Size**: 5 synthetic documents (12 pages total). A larger corpus spanning diverse industry disclosures, multi-column layouts, and scanned OCR documents is necessary to evaluate generalization.
 - **Rule Boundary**: The evaluation covers deterministic table math, in-text percentage rates and distributions, direct metric conflicts, polar status contradictions, milestone inversions, and scale mismatches. It does not measure complex qualitative footnote disclosures or non-standard accounting treatments.
 - **Language**: English-language corporate disclosures only.

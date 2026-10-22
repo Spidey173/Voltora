@@ -189,7 +189,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ isOpen, onClose,
               Audit Subsystem Accuracy (Category Breakdown)
             </span>
             <span style={{ fontSize: '11px', color: '#806B70' }}>
-              {data?.total_documents || 4} docs ({data?.total_pages || 10} pages)
+              {data?.total_documents || 5} docs ({data?.total_pages || 12} pages)
             </span>
           </div>
 
@@ -248,7 +248,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ isOpen, onClose,
             <ShieldCheck size={14} />
             <span>Synthetic Evaluation Scope & Limitations</span>
           </div>
-          Evaluated against {data?.total_documents || 4} generated test documents ({data?.total_pages || 10} pages total): {cleanTested} clean baseline controls (0 false alarms) and {data?.total_documents ? data.total_documents - cleanTested : 2} injected discrepancy reports (10 ground-truth issues).
+          Evaluated against {data?.total_documents || 5} generated test documents ({data?.total_pages || 12} pages total): {cleanTested} clean baseline controls (0 false alarms) and {data?.total_documents ? data.total_documents - cleanTested : 3} injected discrepancy reports ({data ? Object.values(data.categories || {}).reduce((acc, c) => acc + ((c.tp ?? 0) + (c.fn ?? 0)), 0) : 12} ground-truth issues).
           <div style={{ marginTop: '6px', color: '#BCA3A7' }}>
             <strong>Important Limitation:</strong> This benchmark is a software regression test designed to verify that auditor rules trigger accurately on programmed examples. It does not measure or prove generalized accuracy on real-world financial filings, which feature varied accounting standards, complex multi-column typography, and noisy scans.
           </div>

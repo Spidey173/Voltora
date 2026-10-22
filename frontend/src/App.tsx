@@ -98,19 +98,15 @@ export default function App() {
 
       if (res.ok) {
         const data: AuditReport = await res.json();
-        setTimeout(() => {
-          setReport(data);
-          setActivePage(1);
-          if (data.issues.length > 0) {
-            setActiveIssue(data.issues[0]);
-            setIsInspectorOpen(true);
-          } else {
-            setActiveIssue(null);
-            // If clean audit, inspector still open by default with rich summary or can collapse
-            setIsInspectorOpen(true);
-          }
-          setIsAnalyzing(false);
-        }, 2000);
+        setReport(data);
+        setActivePage(1);
+        if (data.issues.length > 0) {
+          setActiveIssue(data.issues[0]);
+        } else {
+          setActiveIssue(null);
+        }
+        setIsInspectorOpen(true);
+        setIsAnalyzing(false);
       } else {
         const err = await res.json();
         alert(err.detail || 'Upload failed');
@@ -138,17 +134,15 @@ export default function App() {
       const res = await fetch(`/api/sample/${sampleName}`);
       if (res.ok) {
         const data: AuditReport = await res.json();
-        setTimeout(() => {
-          setReport(data);
-          setActivePage(1);
-          if (data.issues.length > 0) {
-            setActiveIssue(data.issues[0]);
-          } else {
-            setActiveIssue(null);
-          }
-          setIsInspectorOpen(true);
-          setIsAnalyzing(false);
-        }, 1200);
+        setReport(data);
+        setActivePage(1);
+        if (data.issues.length > 0) {
+          setActiveIssue(data.issues[0]);
+        } else {
+          setActiveIssue(null);
+        }
+        setIsInspectorOpen(true);
+        setIsAnalyzing(false);
       } else {
         alert('Failed to load sample document.');
         setIsAnalyzing(false);

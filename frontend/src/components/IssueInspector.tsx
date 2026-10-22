@@ -243,10 +243,10 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
             </div>
 
             <h4 className="font-heading" style={{ fontSize: '16px', fontWeight: 700, color: '#FFF1EE', marginBottom: '6px' }}>
-              No Issues Detected: Grade A+
+              No Issues Detected by Evaluated Checks
             </h4>
             <p style={{ fontSize: '12px', color: '#BCA3A7', lineHeight: 1.5 }}>
-              No issues detected by the evaluated checks across the document pages. (Note: this reflects evaluated rule coverage and does not constitute a certified statutory audit).
+              No issues detected by the evaluated checks across the document pages. (Note: this reflects evaluated rule coverage and does not constitute a certified audit opinion).
             </p>
           </div>
 
@@ -261,7 +261,7 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
             }}
           >
             <div style={{ fontSize: '12px', color: '#FFF1EE', fontWeight: 700, marginBottom: '12px' }}>
-              Automated Subsystem Verifications
+              Evaluated Rule Subsystems
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px' }}>

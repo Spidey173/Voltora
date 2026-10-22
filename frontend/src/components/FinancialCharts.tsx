@@ -32,11 +32,11 @@ export const FinancialCharts: React.FC<FinancialChartsProps> = ({ report, onSele
         score: issue.severity === 'critical' ? 95 : issue.severity === 'warning' ? 60 : 30,
       }))
     : [
-        { name: 'Math Cross-Footing', fullTitle: 'Arithmetic row/column balance verification', score: 100, severity: 'verified' },
-        { name: 'Cross-Page Logic', fullTitle: 'NLI statement contradiction detection', score: 100, severity: 'verified' },
-        { name: 'Unit Consistency', fullTitle: 'Standardized scale & currency denominations', score: 100, severity: 'verified' },
-        { name: 'Fiscal Sequence', fullTitle: 'Chronological timeline & reporting periods', score: 100, severity: 'verified' },
-        { name: 'Table Extraction', fullTitle: 'PyMuPDF visual schedule matrix parsing', score: 100, severity: 'verified' },
+        { name: 'Math Cross-Footing', fullTitle: 'Arithmetic row/column balance evaluation', score: 100, severity: 'clean' },
+        { name: 'Cross-Page Logic', fullTitle: 'NLI statement contradiction detection', score: 100, severity: 'clean' },
+        { name: 'Unit Consistency', fullTitle: 'Standardized scale & currency denominations', score: 100, severity: 'clean' },
+        { name: 'Fiscal Sequence', fullTitle: 'Chronological timeline & reporting periods', score: 100, severity: 'clean' },
+        { name: 'Table Extraction', fullTitle: 'PyMuPDF visual schedule matrix parsing', score: 100, severity: 'clean' },
       ];
 
   // Dynamic timeline nodes generated directly from the real document pages
@@ -67,8 +67,8 @@ export const FinancialCharts: React.FC<FinancialChartsProps> = ({ report, onSele
     return {
       label: pageNum === 1 ? 'Executive Overview' : `Page ${pageNum} Statements`,
       page: pageNum,
-      status: 'verified',
-      note: 'All financial statements & tables verified',
+      status: 'clean',
+      note: 'No discrepancies detected by evaluated checks',
       issue: undefined,
     };
   });
@@ -107,7 +107,7 @@ export const FinancialCharts: React.FC<FinancialChartsProps> = ({ report, onSele
           <div style={{ display: 'flex', gap: '14px', fontSize: '12px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#10B981', fontWeight: 500 }}>
               <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10B981' }} />
-              Verified
+              No Issues
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#FFA133', fontWeight: 500 }}>
               <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#FFA133' }} />
@@ -270,7 +270,7 @@ export const FinancialCharts: React.FC<FinancialChartsProps> = ({ report, onSele
                           ? '#FF3838'
                           : entry.severity === 'warning'
                           ? '#FFA133'
-                          : entry.severity === 'verified'
+                          : entry.severity === 'clean' || entry.severity === 'verified'
                           ? '#10B981'
                           : '#FF5A1F'
                       }
