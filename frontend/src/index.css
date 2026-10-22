@@ -1,0 +1,262 @@
+@charset "UTF-8";
+
+/* ═══════════════════════════════════════════════════════════
+   VOLTORA — Magma Lava Sunset Design System
+   Rich, Warm Volcanic Obsidian & Sunset Glow Palette
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Volcanic Obsidian Base (Non-templated deep warm darks) */
+  --bg-main: #0C080A;
+  --bg-panel: #140E11;
+  --bg-card: #1A1216;
+  --bg-card-hover: #24181E;
+  --bg-subtle: #0F0A0D;
+
+  /* Warm Magma & Sunset Borders */
+  --border-subtle: rgba(255, 120, 80, 0.10);
+  --border-light: rgba(255, 120, 80, 0.22);
+  --border-focus: rgba(255, 90, 31, 0.65);
+
+  /* Magma / Lava Sunset Color System */
+  --magma-red: #FF3838;
+  --lava-orange: #FF5A1F;
+  --sunset-amber: #FFA133;
+  --sunset-rose: #E8365D;
+  --sunset-gold: #FFB834;
+
+  /* Primary Accent: Molten Sunset Lava */
+  --primary: #FF5A1F;
+  --primary-hover: #FF7036;
+  --primary-soft: rgba(255, 90, 31, 0.12);
+  --primary-glow: rgba(255, 90, 31, 0.35);
+  --primary-gradient: linear-gradient(135deg, #FF3838 0%, #FF5A1F 55%, #FFA133 100%);
+  --sunset-gradient: linear-gradient(135deg, #E8365D 0%, #FF5A1F 50%, #FFA133 100%);
+
+  /* Status Colors */
+  --critical: #FF3838;
+  --critical-soft: rgba(255, 56, 56, 0.12);
+  --critical-border: rgba(255, 56, 56, 0.32);
+
+  --warning: #FFA133;
+  --warning-soft: rgba(255, 161, 51, 0.14);
+  --warning-border: rgba(255, 161, 51, 0.32);
+
+  --success: #10B981;
+  --success-soft: rgba(16, 185, 129, 0.12);
+  --success-border: rgba(16, 185, 129, 0.28);
+
+  --info: #FF7036;
+  --info-soft: rgba(255, 112, 54, 0.14);
+
+  /* High Readability Warm Text */
+  --text-primary: #FFF1EE;
+  --text-secondary: #BCA3A7;
+  --text-muted: #806B70;
+
+  /* Modern Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+}
+
+/* Base Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Magma Lava Sunset Ambient Atmosphere */
+.ambient-subtle-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 0%, #1A0D11 0%, #0C080A 75%);
+}
+
+.ambient-subtle-gradient {
+  position: absolute;
+  top: -180px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1100px;
+  height: 650px;
+  background: radial-gradient(ellipse at center, rgba(255, 90, 31, 0.15) 0%, rgba(232, 54, 93, 0.08) 50%, transparent 75%);
+  filter: blur(75px);
+}
+
+/* Text Gradients */
+.sunset-gradient-text {
+  background: linear-gradient(135deg, #FFFFFF 25%, #FFA87D 65%, #FF5A1F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.magma-gradient-text {
+  background: linear-gradient(135deg, #FF6644 0%, #FFA133 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Clean Panels & Cards with Warm Volcanic Accents */
+.clean-panel {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.clean-panel:hover {
+  border-color: var(--border-light);
+}
+
+.clean-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  transition: all 0.15s ease;
+}
+
+.clean-card:hover {
+  background-color: var(--bg-card-hover);
+  border-color: var(--border-light);
+}
+
+/* Buttons with Molten Lava Sunset Styling */
+.btn-primary {
+  background: var(--primary-gradient);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(255, 90, 31, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 6px 22px rgba(255, 90, 31, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-secondary {
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 90, 31, 0.09);
+  border-color: rgba(255, 90, 31, 0.35);
+  color: #FFA87D;
+}
+
+/* Typography Helpers */
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Warm Ember Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 120, 80, 0.2);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 90, 31, 0.4);
+}
+
+/* Document Page Glide Animations (Smooth Forward & Backward Transitions) */
+@keyframes pageSlideNext {
+  from {
+    opacity: 0.75;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pageSlidePrev {
+  from {
+    opacity: 0.75;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.page-glide-next {
+  animation: pageSlideNext 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.page-glide-prev {
+  animation: pageSlidePrev 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
