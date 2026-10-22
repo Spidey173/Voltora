@@ -236,12 +236,12 @@ export const FinancialCharts: React.FC<FinancialChartsProps> = ({ report, onSele
         >
           <div style={{ marginBottom: '16px' }}>
             <h4 className="font-heading" style={{ fontSize: '14px', fontWeight: 700, color: '#FFF1EE', marginBottom: '2px' }}>
-              {hasIssues ? 'Discrepancy Severity & Impact' : 'Subsystem Verification Accuracy'}
+              {hasIssues ? 'Discrepancy Severity & Impact' : 'Subsystem Check Coverage'}
             </h4>
             <p style={{ fontSize: '11px', color: '#BCA3A7' }}>
               {hasIssues
                 ? 'Calculated exposure rating assigned to detected contradictions'
-                : 'Deterministic validation score across financial audit subsystems (100% = zero discrepancies)'}
+                : 'Evaluated rule checks across document subsystems (100 = rule evaluated with zero flagged discrepancies)'}
             </p>
           </div>
 

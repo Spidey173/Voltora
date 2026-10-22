@@ -186,7 +186,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ isOpen, onClose,
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
             <span style={{ fontSize: '12px', color: '#BCA3A7', fontWeight: 600 }}>
-              Audit Subsystem Accuracy (Category Breakdown)
+              Evaluated Rule Subsystems (Category Breakdown)
             </span>
             <span style={{ fontSize: '11px', color: '#806B70' }}>
               {data?.total_documents || 5} docs ({data?.total_pages || 12} pages)

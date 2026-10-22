@@ -28,7 +28,7 @@ logger = logging.getLogger("voltora.api")
 
 app = FastAPI(
     title="Voltora - Automated Multi-Dimensional Document Auditor",
-    description="Deterministic and neuro-symbolic document audit engine with coordinate highlighting",
+    description="Deterministic and heuristic document review engine with coordinate highlighting",
     version="1.0.0"
 )
 

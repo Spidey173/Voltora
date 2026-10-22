@@ -69,7 +69,7 @@ Voltora includes an automated evaluation harness (`eval/run_benchmark.py`) that 
 
 > [!NOTE]
 > **Developer Regression Suite, Not a Field Benchmark:**  
-> This harness is an automated integration test suite evaluated on programmatically generated examples to verify rule logic. It confirms that the 12 injected test patterns trigger the intended rules under strict matching criteria and that clean controls pass without false alarms—**it does not represent measured accuracy on uncurated, heterogeneous real-world filings.**
+> This harness is an automated integration test suite that tests whether the programmed rule subsystems identify 12 specific injected discrepancy patterns across 5 synthetic test documents and checks whether clean baseline controls trigger false alarms. Because the test documents were synthesized specifically to test these rule edge cases, this verification validates rule mechanics—**it does not represent measured accuracy on uncurated, heterogeneous real-world filings.**
 
 ### Running the Verification Harness
 Run the regression harness from the repository root:
@@ -91,24 +91,19 @@ Evaluated across **5 synthetic test documents (12 pages total)**:
 3. Must match multiple keywords (`min_matches >= 2`) and at least one specific identifying anchor (`required_any`, e.g. exact numeric figures or unique initiative name). Single generic words (e.g. matching only "revenue") are rejected.
 4. Clean baseline documents are monitored: any detection on clean documents is penalized as a false positive.
 
-### Suite Coverage & Sample Output
+### Programmed Test Case Coverage
 
-The harness checks 12 programmed rule assertions across the 5 synthetic test documents and 2 clean controls.
+The evaluation harness evaluates 12 target rule assertions across the 5 synthetic test documents alongside 2 clean control documents:
 
-<details>
-<summary>Click to view rule verification breakdown</summary>
+| Audit Subsystem | Programmed Test Assertions | Verification Scope |
+| :--- | :---: | :--- |
+| **Math Discrepancy** | 4 cases | Column/row sum reconciliation, in-text percentage rates, and percentage distribution totals |
+| **Semantic Contradiction** | 3 cases | Opposing polarity statements, mutually exclusive cross-page claims, and headline vs footnote disclosures |
+| **Temporal Inversion** | 4 cases | Milestone chronological order, project completion dates preceding kickoff, and retrograde calendar sequences |
+| **Unit Mismatch** | 1 case | Denomination consistency (thousands vs. millions) and scale multiplier alignment |
+| **Clean Control Baselines** | 2 documents | Evaluates unadulterated baseline filings to ensure clean disclosures and tables produce zero false alarms |
 
-| Audit Subsystem | Injected Test Cases | Detections Matched | Clean Controls | Rule Status |
-| :--- | :---: | :---: | :---: | :---: |
-| **Math Discrepancy** (cross-footing & percentages) | 4 | 4 | Passed | Covered |
-| **Semantic Contradiction** (cross-page claims) | 3 | 3 | Passed | Covered |
-| **Temporal Inversion** (milestone sequences) | 4 | 4 | Passed | Covered |
-| **Unit Mismatch** (scale factors & denominations) | 1 | 1 | Passed | Covered |
-| **Total Test Assertions** | **12** | **12** | **0 false alarms on clean docs** | **All 12 programmed rules verified** |
-
-- **Clean Baseline Documents**: 2 documents evaluated with 0 false alarms.
-- **Average Processing Latency**: ~60–70 ms per page on local CPU.
-</details>
+Running `python -m eval.run_benchmark` executes these assertions against all 5 test documents, displays the resulting detection breakdown and local execution times in your terminal, and writes detailed run metrics to `eval/benchmark_results.json`.
 
 ---
 

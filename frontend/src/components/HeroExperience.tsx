@@ -82,7 +82,7 @@ export const HeroExperience: React.FC<HeroExperienceProps> = ({
             marginBottom: '16px',
           }}
         >
-          Audit financial documents{' '}
+          Review financial documents{' '}
           <span className="sunset-gradient-text">in seconds.</span>
         </h1>
         <p
@@ -366,10 +366,10 @@ export const HeroExperience: React.FC<HeroExperienceProps> = ({
             <Calculator size={18} />
           </div>
           <h4 className="font-heading" style={{ fontSize: '15px', fontWeight: 700, color: '#FFF1EE', marginBottom: '6px' }}>
-            Automated Math Audit
+            Automated Math Reconciliation
           </h4>
           <p style={{ fontSize: '13px', color: '#BCA3A7', lineHeight: 1.5 }}>
-            Deterministic verification of row and column totals, percentages, and financial formula sums with zero AI hallucination.
+            Deterministic Python calculation of row and column totals, percentages, and financial formula sums to highlight potential arithmetic discrepancies.
           </p>
         </div>
 
