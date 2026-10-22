@@ -243,10 +243,10 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
             </div>
 
             <h4 className="font-heading" style={{ fontSize: '16px', fontWeight: 700, color: '#FFF1EE', marginBottom: '6px' }}>
-              Clean Audit Opinion: Grade A+
+              No Issues Detected: Grade A+
             </h4>
             <p style={{ fontSize: '12px', color: '#BCA3A7', lineHeight: 1.5 }}>
-              Zero numerical contradictions, arithmetic summation anomalies, or chronological inversions detected across the entire filing.
+              No issues detected by the evaluated checks across the document pages. (Note: this reflects evaluated rule coverage and does not constitute a certified statutory audit).
             </p>
           </div>
 

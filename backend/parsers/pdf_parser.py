@@ -162,7 +162,8 @@ class PDFParser:
                     
                     table_items = []
                     for line in block_lines:
-                        m = re.match(r"^(.+?)[:\t\-—]+\s*([$€£¥]?\s*[-+]?[0-9]+(?:\.[0-9]+)?\s*[mkbMK%]?)$", line)
+                        # Match label followed by separator (: or \t or - or —) and amount, supporting negative amounts like -$25 or ($25)
+                        m = re.match(r"^(.+?)(?<![-+])[:\t—]+\s*([-+]?[$€£¥]?[-+]?[0-9]+(?:\.[0-9]+)?\s*[mkbMK%]?|\([$€£¥]?[0-9]+(?:\.[0-9]+)?\s*[mkbMK%]?\))$", line)
                         if m:
                             table_items.append([m.group(1).strip(), m.group(2).strip()])
                     

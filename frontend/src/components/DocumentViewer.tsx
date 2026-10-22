@@ -440,7 +440,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
                 fontSize: '11px',
               }}
             >
-              ✓ Page {activePage} verified with zero discrepancies
+              ✓ Page {activePage}: No issues detected by evaluated checks
             </span>
           )}
 
@@ -1120,7 +1120,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
                           {entry.title}
                         </div>
                         <div style={{ fontSize: '9px', color: '#806B70' }}>
-                          {entry.time} • {entry.issuesCount > 0 ? `${entry.issuesCount} issues flagged` : 'Verified Clean'}
+                          {entry.time} • {entry.issuesCount > 0 ? `${entry.issuesCount} issues flagged` : 'No issues flagged'}
                         </div>
                       </div>
 

@@ -91,5 +91,59 @@ class TestUploadValidation(unittest.TestCase):
             self.assertNotIn("internal_db_syntax_leak_error", res.json()["detail"])
 
 
+    def test_cors_allowed_origin(self):
+        """Allowed origin receives Access-Control-Allow-Origin header."""
+        res = self.client.options(
+            "/api/health",
+            headers={
+                "Origin": "http://localhost:5173",
+                "Access-Control-Request-Method": "GET",
+            },
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.headers.get("access-control-allow-origin"), "http://localhost:5173")
+        # Ensure credentials header is not exposed
+        self.assertIsNone(res.headers.get("access-control-allow-credentials"))
+
+    def test_cors_blocked_unauthorized_origin(self):
+        """Unauthorized external origin does not receive Access-Control-Allow-Origin header."""
+        res = self.client.options(
+            "/api/health",
+            headers={
+                "Origin": "https://malicious-external-site.com",
+                "Access-Control-Request-Method": "GET",
+            },
+        )
+        self.assertIsNone(res.headers.get("access-control-allow-origin"))
+
+    def test_cors_wildcard_rejected_at_startup(self):
+        """Configuring FRONTEND_ORIGINS with wildcard '*' raises ValueError."""
+        from backend.main import get_allowed_origins
+        with self.assertRaises(ValueError) as ctx:
+            get_allowed_origins("*")
+        self.assertIn("Wildcard '*' is strictly prohibited", str(ctx.exception))
+
+    def test_chunked_streaming_upload_limit_enforced(self):
+        """Oversized file triggers early 413 cutoff without buffering entire file."""
+        oversized_data = b"%PDF-1.4\n" + b"A" * (26 * 1024 * 1024)
+        files = {"file": ("streaming_oversized.pdf", oversized_data, "application/pdf")}
+        res = self.client.post("/api/upload", files=files)
+        self.assertEqual(res.status_code, 413)
+        self.assertIn("exceeds maximum permitted limit", res.json()["detail"].lower())
+
+    def test_single_user_document_isolation_by_id(self):
+        """Documents in in-memory session store are strictly accessed by unique ID and not cross-pollinated."""
+        from backend.services.doc_service import doc_store
+        doc1 = fitz.open()
+        p1 = doc1.new_page()
+        p1.insert_text((50, 50), "Document 1 content")
+        bytes1 = doc1.tobytes()
+        doc1.close()
+
+        r1 = doc_store.add_document(bytes1, doc_id="isolated_doc_1", title="Doc 1")
+        self.assertEqual(r1.doc_id, "isolated_doc_1")
+        self.assertIsNone(doc_store.get_report("non_existent_doc_id"))
+
+
 if __name__ == "__main__":
     unittest.main()

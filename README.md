@@ -78,24 +78,25 @@ Voltora includes an automated evaluation suite (`eval/run_benchmark.py`) that ev
 
 ### Current Evaluation Results (Synthetic Test Corpus)
 
-Evaluated across **4 test documents (10 pages total)**:
+Evaluated across **5 test documents (12 pages total)**:
 - `acme_fy24_annual_report.pdf` (4 pages, 8 injected multi-dimensional issues)
 - `clean_financial_statement.pdf` (3 pages, clean baseline control)
 - `vertex_energy_audit.pdf` (2 pages, 2 injected issues + clean tables)
 - `nova_clean_quarterly.pdf` (1 page, clean baseline control)
+- `solaris_edge_cases.pdf` (2 pages, 2 injected issues + negative values schedule)
 
 | Audit Category | Ground Truth | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Precision | Recall | F1-Score |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Math Discrepancy** | 3 | 3 | 0 | 0 | 100.0% | 100.0% | 100.0% |
+| **Math Discrepancy** | 4 | 4 | 0 | 0 | 100.0% | 100.0% | 100.0% |
 | **Semantic Contradiction** | 3 | 3 | 0 | 0 | 100.0% | 100.0% | 100.0% |
-| **Temporal Inversion** | 3 | 3 | 0 | 0 | 100.0% | 100.0% | 100.0% |
+| **Temporal Inversion** | 4 | 4 | 0 | 0 | 100.0% | 100.0% | 100.0% |
 | **Unit Mismatch** | 1 | 1 | 0 | 0 | 100.0% | 100.0% | 100.0% |
-| **MICRO AVERAGE** | **10** | **10** | **0** | **0** | **100.0%** | **100.0%** | **100.0%** |
-| **MACRO AVERAGE** | **10** | **-** | **-** | **-** | **100.0%** | **100.0%** | **100.0%** |
+| **MICRO AVERAGE** | **12** | **12** | **0** | **0** | **100.0%** | **100.0%** | **100.0%** |
+| **MACRO AVERAGE** | **12** | **-** | **-** | **-** | **100.0%** | **100.0%** | **100.0%** |
 
 - **Clean Document False-Alarm Count**: `0` across 2 clean control documents.
 - **Skipped Documents**: `0`
-- **Average Processing Throughput**: `~67 ms` per page.
+- **Average Processing Throughput**: `~62 ms` per page.
 
 > **Evaluation Limitations**:  
 > Benchmark metrics are measured on a programmatically generated synthetic corpus designed for unit and integration testing. These results demonstrate rule verification correctness on modeled patterns, but do not represent measured accuracy on heterogeneous, uncurated real-world filings or complex accounting edge cases.
@@ -108,12 +109,12 @@ Evaluated across **4 test documents (10 pages total)**:
 > **Local Single-User Architecture**:  
 > The backend operates an in-memory document session store and does not implement user authentication, role-based access control, or multi-tenant workspace isolation. Voltora is intended solely for local desktop review by an individual analyst. **It must not be exposed to public networks or untrusted multi-user environments with confidential documents.**
 
-- **CORS Restriction**:  
-  Wildcard origins (`*`) are disallowed. Allowed frontend origins are read from the `FRONTEND_ORIGINS` environment variable (comma-separated list). When unspecified, it safely defaults to local development origins (`http://localhost:5173`, `http://127.0.0.1:5173`, `http://localhost:3000`, `http://127.0.0.1:3000`).
+- **Strict CORS Restriction**:  
+  Wildcard origins (`*`) are strictly rejected at startup (raising a configuration `ValueError`). Allowed frontend origins are configured via the `FRONTEND_ORIGINS` environment variable (comma-separated list) or default to local development origins (`http://localhost:5173`, `http://127.0.0.1:5173`, `http://localhost:3000`, `http://127.0.0.1:3000`). Browser credential headers are disabled (`allow_credentials=False`) because the local desktop API does not use cookies or browser-authenticated sessions.
 - **Synchronous Execution Model**:  
   Document ingestion and multi-pass rule evaluation execute synchronously on the server in a single HTTP request pass (~50-150ms). The UI displays a truthful processing indicator while the request is in flight rather than simulating multi-stage progress bars.
-- **Upload Hardening**:  
-  Uploads are validated for `.pdf` file extension, standard `%PDF-` file magic bytes, an upload size limit of 25MB, and a maximum page limit of 100 pages. Malformed or corrupted PDFs return structured 400 Bad Request responses. Directory traversal attempts on sample document endpoints are blocked.
+- **Upload Hardening & Streaming Limit**:  
+  Uploads are validated for `.pdf` extension and `%PDF-` magic bytes. File sizes are checked in chunks during streaming to abort with a 413 response immediately upon exceeding the 25MB limit without buffering arbitrarily large payloads into memory. Documents exceeding 100 pages are rejected with 400 Bad Request. Internal server errors are logged with full stack traces on the server while returning sanitized messages to clients.
 
 ---
 

@@ -123,5 +123,31 @@ GROUND_TRUTH_DATASET = [
         "file_path": "sample_docs/nova_clean_quarterly.pdf",
         "is_clean": True,
         "expected_issues": []  # Clean baseline control document: 0 issues expected
+    },
+    {
+        "doc_id": "solaris_edge_cases",
+        "file_path": "sample_docs/solaris_edge_cases.pdf",
+        "is_clean": False,
+        "expected_issues": [
+            {
+                "id": "solaris_math_growth_rate",
+                "category": "math_discrepancy",
+                "page": 1,
+                "description": "Stated 40% growth from 100 to 120 (actual is 20%)",
+                "evidence_keywords": ["40", "100", "120", "growth", "revenue"],
+                "required_any": ["40", "100", "120"],
+                "min_matches": 2
+            },
+            {
+                "id": "solaris_temp_project_helios",
+                "category": "temporal_inversion",
+                "page": 2,
+                "secondary_page": 2,
+                "description": "Project Helios commissioning (January 2024) precedes kickoff (August 2024)",
+                "evidence_keywords": ["helios"],
+                "required_any": ["helios"],
+                "min_matches": 1
+            }
+        ]
     }
 ]

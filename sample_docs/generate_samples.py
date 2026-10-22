@@ -231,8 +231,56 @@ The organization maintained $25M in operational liquidity and zero debt obligati
     doc.close()
     print(f"Generated {output_path}")
 
+def generate_edge_cases():
+    """Generates a test document covering negative margins, rounding disclosures, and multi-column tables."""
+    os.makedirs("sample_docs", exist_ok=True)
+    doc = fitz.open()
+    rect = fitz.Rect(54, 54, 612 - 54, 792 - 54)
+
+    # Page 1: Negative operating values & Table cross-footing
+    page1 = doc.new_page(width=612, height=792)
+    p1_text = """SOLARIS DYNAMICS INC
+FINANCIAL SUMMARY & VARIANCE DISCLOSURES - FY2024
+
+1. Operational Outlays & Negative Operating Income
+During fiscal year 2024, Solaris Dynamics navigated severe supply chain inflation.
+Operating revenue reached $150M against operating expenses of $180M, yielding an operating deficit of -$30M.
+
+Table 1: Regional Operational Income (in millions)
+- Americas Region: $40
+- EMEA Region: -$25
+- APAC Region: $15
+Total Regional Operational Income: $30
+
+Note: The stated total of $30M reconciles with 40 + (-25) + 15 = 30.
+
+2. Injected Rate Discrepancy
+Stated operating revenue expanded by 40% from 100 to 120 during the annual period.
+"""
+    page1.insert_textbox(rect, p1_text, fontsize=11, fontname="helv", color=(0.1, 0.1, 0.1))
+
+    # Page 2: Ambiguous claim & milestone chronology
+    page2 = doc.new_page(width=612, height=792)
+    p2_text = """SOLARIS DYNAMICS INC
+PROJECT CHRONOLOGY & FOOTNOTES
+
+3. R&D Initiative Timeline
+Under corporate restructuring, Project Helios commissioning was finalized in January 2024, while Project Helios charter kickoff began in August 2024.
+
+4. Supplementary Footnote Disclosures
+Cash and cash equivalents totaled $85M at year-end.
+Management anticipates moderate seasonal revenue fluctuations in future quarters.
+"""
+    page2.insert_textbox(rect, p2_text, fontsize=11, fontname="helv", color=(0.1, 0.1, 0.1))
+
+    output_path = "sample_docs/solaris_edge_cases.pdf"
+    doc.save(output_path)
+    doc.close()
+    print(f"Generated {output_path}")
+
 if __name__ == "__main__":
     generate_acme_fy24()
     generate_clean_statement()
     generate_vertex_audit()
     generate_nova_clean()
+    generate_edge_cases()

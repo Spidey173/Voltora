@@ -6,7 +6,7 @@ This directory contains the automated evaluation framework and ground-truth data
 
 ## 1. Evaluation Corpus & Dataset Characteristics
 
-The benchmark currently evaluates **4 synthetic financial disclosure documents** (totaling 10 pages) generated via PyMuPDF in `sample_docs/`:
+The benchmark evaluates **5 synthetic financial disclosure documents** (totaling 12 pages) generated via PyMuPDF in `sample_docs/`:
 
 1. **`acme_fy24_annual_report.pdf` (4 pages, Injected Error Corpus)**:
    - Contains 8 annotated discrepancies across all 4 auditing dimensions:
@@ -26,6 +26,10 @@ The benchmark currently evaluates **4 synthetic financial disclosure documents**
    - Reconciled cost schedule and consistent debt disclosures.
 4. **`nova_clean_quarterly.pdf` (1 page, Clean Control Baseline)**:
    - Clean quarterly disclosure with verified arithmetic and consistent liquidity disclosures. Expected issues: `0`.
+5. **`solaris_edge_cases.pdf` (2 pages, Edge Cases & Negative Values)**:
+   - Negative operating outlays in regional table ($40 + (-$25) + $15 = $30M, clean cross-footing).
+   - In-text percentage rate error (stated 40% growth from 100 to 120, actual is 20%).
+   - Milestone sequence anomaly on Page 2 (Project Helios commissioning in Jan 2024 precedes kickoff in Aug 2024).
 
 > **Note on Synthetic vs. Real-World Filings**:  
 > The documents in this benchmark are programmatically generated synthetic test cases modeled after corporate annual reports and 10-K disclosures. While designed to simulate realistic financial schedules and disclosure drafting mistakes, benchmark metrics reflect performance on this synthetic suite and should not be misconstrued as measured accuracy across uncurated, heterogeneous real-world filings.

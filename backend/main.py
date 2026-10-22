@@ -33,25 +33,35 @@ app = FastAPI(
 )
 
 # Restrict CORS to allowed frontend origins read from FRONTEND_ORIGINS (or fallback to safe local development origins).
-# Wildcard origins are explicitly disallowed to prevent unauthorized cross-origin requests.
+# Wildcard origins are strictly rejected at startup to prevent accidental misconfiguration.
 DEFAULT_FRONTEND_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
-env_origins = os.getenv("FRONTEND_ORIGINS", "")
-allowed_origins = (
-    [origin.strip() for origin in env_origins.split(",") if origin.strip() and origin.strip() != "*"]
-    if env_origins.strip()
-    else DEFAULT_FRONTEND_ORIGINS
-)
+
+def get_allowed_origins(env_origins_str: str | None = None) -> list[str]:
+    raw = env_origins_str if env_origins_str is not None else os.getenv("FRONTEND_ORIGINS", "")
+    if not raw.strip():
+        return list(DEFAULT_FRONTEND_ORIGINS)
+    
+    origins = [orig.strip() for orig in raw.split(",") if orig.strip()]
+    for orig in origins:
+        if orig == "*":
+            raise ValueError(
+                "Invalid FRONTEND_ORIGINS: Wildcard '*' is strictly prohibited for security in Voltora. "
+                "Specify explicit origin URLs (e.g., 'http://localhost:5173')."
+            )
+    return origins
+
+allowed_origins = get_allowed_origins()
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_credentials=False,  # Local API does not require session cookies or browser credentials
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -76,18 +86,30 @@ async def upload_document(file: UploadFile = File(...)):
             detail="Only PDF documents (.pdf) are supported."
         )
 
-    # 2. File size validation
-    content = await file.read()
-    if len(content) == 0:
+    # 2. Chunk-based streaming read with early size cutoff (avoids buffering arbitrarily huge files)
+    chunks = []
+    total_bytes = 0
+    chunk_size = 64 * 1024  # 64 KB
+
+    while True:
+        chunk = await file.read(chunk_size)
+        if not chunk:
+            break
+        total_bytes += len(chunk)
+        if total_bytes > MAX_UPLOAD_SIZE:
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail=f"File size exceeds maximum permitted limit of {MAX_UPLOAD_SIZE // (1024 * 1024)}MB."
+            )
+        chunks.append(chunk)
+
+    if total_bytes == 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The uploaded file is empty."
         )
-    if len(content) > MAX_UPLOAD_SIZE:
-        raise HTTPException(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            detail=f"File size exceeds maximum permitted limit of {MAX_UPLOAD_SIZE // (1024 * 1024)}MB."
-        )
+
+    content = b"".join(chunks)
 
     # 3. PDF Header / Magic Bytes Validation
     if b"%PDF-" not in content[:1024]:
@@ -182,24 +204,7 @@ def get_benchmark_results():
             return {"status": "Error loading benchmark results."}
     return {"status": "Benchmark not yet run. Run 'python -m eval.run_benchmark' first."}
 
-@app.get("/api/audit-stream/{doc_id}")
-async def stream_audit_progress(doc_id: str):
-    """Server-Sent Events (SSE) progressive streaming endpoint."""
-    report = doc_store.get_report(doc_id)
-    if not report:
-        raise HTTPException(status_code=404, detail="Document not found.")
-
-    async def event_generator():
-        yield f"data: {json.dumps({'stage': 'ingestion', 'progress': 25, 'message': 'PyMuPDF parsed text blocks and tables'})}\n\n"
-        await asyncio.sleep(0.1)
-        yield f"data: {json.dumps({'stage': 'math_audit', 'progress': 50, 'message': 'Cross-footing verified table row and column totals'})}\n\n"
-        await asyncio.sleep(0.1)
-        yield f"data: {json.dumps({'stage': 'semantic_audit', 'progress': 80, 'message': 'TF-IDF candidate pairing and contradiction judgment evaluated'})}\n\n"
-        await asyncio.sleep(0.1)
-        yield f"data: {json.dumps({'stage': 'completed', 'progress': 100, 'report': report.model_dump()})}\n\n"
-
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
-
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
+    # Default local binding to 127.0.0.1 for secure local execution
+    uvicorn.run("backend.main:app", host="127.0.0.1", port=8000, reload=True)
