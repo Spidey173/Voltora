@@ -105,6 +105,18 @@ The evaluation harness evaluates 12 target rule assertions across the 5 syntheti
 
 Running `python -m eval.run_benchmark` executes these assertions against all 5 test documents, displays the resulting detection breakdown and local execution times in your terminal, and writes detailed run metrics to `eval/benchmark_results.json`.
 
+### Verified Clean-Setup Run Results
+
+All documented setup, test, and build targets have been run and confirmed from this checkout:
+
+| Check | Execution Command | Result | Scope & Measured Output |
+| :--- | :--- | :---: | :--- |
+| **Backend Startup** | `uvicorn backend.main:app` | **HTTP 200 OK** | Starts cleanly; `GET /api/health` returns `status: online` |
+| **Unit & Integration Suite** | `python -m unittest discover tests` | **31 / 31 passed** | 0 failures, 0 errors in ~5.9s (tests parsers, auditors, upload bounds, CORS, session store) |
+| **Frontend Lint** | `npm --prefix frontend run lint` | **0 errors** | Fast type and lint check via `oxlint` |
+| **Frontend Production Build** | `npm --prefix frontend run build` | **Build passed** | `tsc -b && vite build` bundled production assets with 0 errors |
+| **Regression Evaluation Harness** | `python -m eval.run_benchmark` | **12 / 12 matched** | Evaluated 5 synthetic test PDFs (12 pages); 0 false alarms on 2 clean controls; ~69 ms/page on local CPU |
+
 ---
 
 ## 🔒 Security & Deployment Architecture

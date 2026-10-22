@@ -233,7 +233,7 @@ export const HeroExperience: React.FC<HeroExperienceProps> = ({
               letterSpacing: '0.05em',
             }}
           >
-            — OR EVALUATE PRE-LOADED INSTITUTIONAL DISCLOSURES —
+            — OR EVALUATE PRE-LOADED SAMPLE DISCLOSURES —
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <button

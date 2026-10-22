@@ -398,7 +398,7 @@ ${issue.delta ? `- **Discrepancy Variance:** ${issue.delta}` : ''}
       {/* ═══ AI THINKING ANIMATION MODAL ═══ */}
       <AnalysisModal isOpen={isAnalyzing} docName={analyzingDocName} />
 
-      {/* ═══ INSTITUTIONAL BENCHMARK MODAL ═══ */}
+      {/* ═══ SYNTHETIC REGRESSION RESULTS MODAL ═══ */}
       <BenchmarkModal
         isOpen={showBenchmarkModal}
         onClose={() => setShowBenchmarkModal(false)}

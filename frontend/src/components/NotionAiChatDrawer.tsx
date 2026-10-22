@@ -31,7 +31,7 @@ interface NotionAiChatDrawerProps {
   onSelectIssue?: (issue: AuditIssue, targetPage?: number) => void;
 }
 
-// Custom Institutional Markdown & Table Renderer
+// Custom Markdown & Table Renderer
 const FormattedAuditText: React.FC<{
   content: string;
   onJumpToPage: (page: number) => void;
@@ -387,14 +387,14 @@ export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
   const thinkingMessages = [
     'Cross-referencing multi-page schedules & footnote commitments...',
     'Validating arithmetic cross-footing and variance formulas...',
-    'Synthesizing institutional audit diagnostic & corrective language...',
+    'Synthesizing review diagnostic & corrective language...',
   ];
 
   const quickProtocols = [
     { label: 'Top Discrepancies', icon: AlertTriangle, query: 'Summarize top discrepancies' },
     { label: 'Math Variance', icon: Calculator, query: 'Explain revenue & EBITDA variance' },
-    { label: 'Audit Debt', icon: Scale, query: 'Check debt disclosures' },
-    { label: 'Draft Memo', icon: FileText, query: 'Draft audit resolution memo' },
+    { label: 'Review Debt', icon: Scale, query: 'Check debt disclosures' },
+    { label: 'Draft Memo', icon: FileText, query: 'Draft review resolution memo' },
     { label: 'CFO Talking Points', icon: Briefcase, query: 'Generate high-yield CFO inquiry questions' },
   ];
 

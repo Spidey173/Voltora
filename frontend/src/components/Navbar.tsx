@@ -207,7 +207,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
           >
             <Layers size={13} />
-            <span>Document Audit</span>
+            <span>Document Review</span>
           </button>
 
           <button
@@ -253,7 +253,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
-              title="Click to view full Institutional Benchmark metrics"
+              title="Click to view Synthetic Regression Results"
             >
               <div
                 style={{

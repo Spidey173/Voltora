@@ -77,7 +77,7 @@ export const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ isOpen, onClose,
             </div>
             <div>
               <h3 className="font-heading" style={{ fontSize: '16px', fontWeight: 700, color: '#FFF1EE', marginBottom: '2px' }}>
-                Synthetic Test Suite Evaluation
+                Synthetic Regression Results
               </h3>
               <p style={{ fontSize: '12px', color: '#BCA3A7' }}>
                 Automated regression test suite evaluated on generated test documents with strict 1-to-1 matching
