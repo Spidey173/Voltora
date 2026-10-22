@@ -240,14 +240,16 @@ class ChatService:
                     f"• **{wi.title} (Page {wi.primary_anchor.page}):** {wi.description}\n"
                 )
 
+            crit_findings_text = crit_list if crit_list else "No critical issues detected.\n"
+            warn_findings_text = f"#### Additional Warnings:\n{warn_list}\n" if warn_list else ""
             answer = (
                 f"### Executive Audit Summary: {doc_name}\n\n"
                 f"**Integrity Rating:** **{health}/100 (Grade {grade})** | **Status:** Discrepancies Flagged for Review\n\n"
                 f"Voltora analyzed {report.summary.pages_analyzed} pages and {report.summary.tables_analyzed} tables, "
                 f"identifying **{total} discrepancies** ({critical} Critical, {report.summary.warning_count} Warnings).\n\n"
-                f"#### Critical Findings:\n{crit_list if crit_list else 'No critical issues detected.\n'}"
-                + (f"#### Additional Warnings:\n{warn_list}\n" if warn_list else "")
-                + f"**Recommended Action:** Review the highlighted discrepancies with the disclosure authors and reconcile against source records."
+                f"#### Critical Findings:\n{crit_findings_text}"
+                f"{warn_findings_text}"
+                f"**Recommended Action:** Review the highlighted discrepancies with the disclosure authors and reconcile against source records."
             )
             pages = sorted(list(set([i.primary_anchor.page for i in issues])))
             return ChatDocResponse(
@@ -340,6 +342,11 @@ class ChatService:
                     f"| {idx} | {p_text} | {i.title} | `{i.actual_value or 'Stated'}` vs `{i.expected_value or 'Expected'}` | {i.suggested_fix or 'Reconcile'} |\n"
                 )
 
+            findings_table = (
+                table_rows
+                if table_rows
+                else "| - | All | No discrepancies flagged | - | Document consistent with rules |\n"
+            )
             answer = (
                 f"### DRAFT AUDIT REVIEW MEMORANDUM\n\n"
                 f"**TO:** Document Review Team / Financial Reporting Working Group  \n"
@@ -353,7 +360,7 @@ class ChatService:
                 f"#### 2. Key Findings Schedule\n\n"
                 f"| # | Location | Finding | Values / Variance | Suggested Action |\n"
                 f"|:---|:---|:---|:---|:---|\n"
-                f"{table_rows if table_rows else '| - | All | No discrepancies flagged | - | Document consistent with rules |\n'}\n\n"
+                f"{findings_table}\n\n"
                 f"#### 3. Recommended Next Steps\n"
                 f"1. Validate reported variances against original source spreadsheets or ledger entries.\n"
                 f"2. Align narrative descriptions with audited financial statements prior to publication.\n"
