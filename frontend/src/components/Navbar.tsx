@@ -234,7 +234,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       )}
 
-      {/* ═══ RIGHT: STREAMLINED FORENSIC STATUS & ACTIONS ═══ */}
+      {/* ═══ RIGHT: STREAMLINED REVIEW STATUS & ACTIONS ═══ */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         {report && (
           <>

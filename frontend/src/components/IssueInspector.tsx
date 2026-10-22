@@ -583,7 +583,7 @@ export const IssueInspector: React.FC<IssueInspectorProps> = ({
                 }
 
                 /* ────────────────────────────────────────────────────────
-                   CASE B: SELECTED EXPANDED FORENSIC DOSSIER
+                   CASE B: SELECTED EXPANDED EVIDENCE DOSSIER
                    Reveals full evidence, comparisons, and auditor actions
                    ──────────────────────────────────────────────────────── */
                 return (

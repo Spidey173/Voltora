@@ -505,7 +505,7 @@ export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
       {
         id: `init_${Date.now()}`,
         role: 'assistant',
-        content: `Conversation reset. Re-auditing **${report.doc_name}** with fresh context. Ask any question or select a forensic inquiry below.`,
+        content: `Conversation reset. Re-evaluating **${report.doc_name}** with fresh context. Ask any question or select a review inquiry below.`,
         timestamp: Date.now(),
         suggestedFollowups: isClean
           ? [
@@ -703,7 +703,7 @@ export const NotionAiChatDrawer: React.FC<NotionAiChatDrawerProps> = ({
                 <button
                   onClick={() =>
                     handleSendMessage(
-                      `Perform a deep forensic inquiry on this active finding: "${activeIssue.title}" on Page ${activeIssue.primary_anchor.page}. Why does it fail audit verification, what is the exact calculation/contradiction, and what is the remediation?`
+                      `Perform a detailed review inquiry on this active finding: "${activeIssue.title}" on Page ${activeIssue.primary_anchor.page}. Why does it trigger this finding, what is the exact calculation/contradiction, and what is the suggested remediation?`
                     )
                   }
                   className="btn-primary"

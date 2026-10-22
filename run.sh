@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ═══════════════════════════════════════════════════════════
-#  VOLTORA — Autonomous Financial Document Auditor
+#  VOLTORA — Automated Financial Document Auditor
 #  One-click launcher for FastAPI Backend & Vite Frontend
 # ═══════════════════════════════════════════════════════════
 
@@ -28,8 +28,8 @@ print_banner() {
   echo "   ╚████╔╝ ╚██████╔╝███████╗██║   ╚██████╔╝██║  ██║██║  ██║"
   echo "    ╚═══╝   ╚═════╝ ╚══════╝╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝"
   echo -e "${NC}"
-  echo -e "  ${VIOLET}${BOLD}⚡ Autonomous Multi-Dimensional Document Auditor${NC}"
-  echo -e "  ${CYAN}Evidence-Grounded • Coordinate Anchors • Groq Neuro-Symbolic${NC}"
+  echo -e "  ${VIOLET}${BOLD}⚡ Automated Multi-Dimensional Document Auditor${NC}"
+  echo -e "  ${CYAN}Evidence-Grounded • Coordinate Anchors • Deterministic & Heuristic Pipelines${NC}"
   echo "  ─────────────────────────────────────────────────────────────"
 }
 

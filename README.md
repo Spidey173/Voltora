@@ -17,7 +17,7 @@
 - **Does not replace certified accounting or audit judgment**: Voltora does not perform statutory audits, provide legal opinions, or guarantee compliance with GAAP/IFRS.
 - **Does not claim full document verification**: A document with zero flagged issues only means that none of the evaluated rules were triggered; it is not a certification of overall accuracy.
 - **Does not support multi-tenant public deployment**: There is no authentication, role-based access control (RBAC), or database tenant isolation. It is engineered strictly for single-user local analyst workflows.
-- **Does not generalize benchmark scores to arbitrary real-world filings**: The benchmark suite is a software regression test evaluating 12 programmed findings across 5 synthetic test PDFs.
+- **Does not generalize test results to arbitrary real-world filings**: The automated regression suite is an internal developer test harness evaluating 12 programmed findings across 5 synthetic test PDFs.
 
 ---
 
@@ -63,16 +63,16 @@
 
 ---
 
-## 🧪 Synthetic Regression Test Suite & Benchmark Reproduction
+## 🧪 Automated Regression & Verification Suite
 
-Voltora includes an automated evaluation suite (`eval/run_benchmark.py`) that tests the audit engine against an annotated ground-truth dataset (`eval/ground_truth.py`).
+Voltora includes an automated evaluation harness (`eval/run_benchmark.py`) that tests the audit engine against an annotated ground-truth dataset of synthetic test documents (`eval/ground_truth.py`).
 
 > [!NOTE]
-> **Scope & Interpretation:**  
-> This benchmark is a software regression test suite evaluated on programmatically generated examples. The 100% precision/recall score reflects that all 12 injected test patterns are correctly identified under strict matching rules without triggering false alarms on clean controls. It validates rule correctness on programmed cases—**it does not represent measured accuracy on uncurated, heterogeneous real-world filings.**
+> **Developer Regression Suite, Not a Field Benchmark:**  
+> This harness is an automated integration test suite evaluated on programmatically generated examples to verify rule logic. It confirms that the 12 injected test patterns trigger the intended rules under strict matching criteria and that clean controls pass without false alarms—**it does not represent measured accuracy on uncurated, heterogeneous real-world filings.**
 
-### How to Reproduce
-Run the benchmark directly from the repository root:
+### Running the Verification Harness
+Run the regression harness from the repository root:
 ```bash
 python -m eval.run_benchmark
 ```
@@ -91,20 +91,24 @@ Evaluated across **5 synthetic test documents (12 pages total)**:
 3. Must match multiple keywords (`min_matches >= 2`) and at least one specific identifying anchor (`required_any`, e.g. exact numeric figures or unique initiative name). Single generic words (e.g. matching only "revenue") are rejected.
 4. Clean baseline documents are monitored: any detection on clean documents is penalized as a false positive.
 
-### Regression Suite Results (Reproducible from Current Code)
+### Suite Coverage & Sample Output
 
-| Audit Category | Ground Truth | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Precision | Recall | F1-Score |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Math Discrepancy** | 4 | 4 | 0 | 0 | 100.0% | 100.0% | 100.0% |
-| **Semantic Contradiction** | 3 | 3 | 0 | 0 | 100.0% | 100.0% | 100.0% |
-| **Temporal Inversion** | 4 | 4 | 0 | 0 | 100.0% | 100.0% | 100.0% |
-| **Unit Mismatch** | 1 | 1 | 0 | 0 | 100.0% | 100.0% | 100.0% |
-| **MICRO AVERAGE** | **12** | **12** | **0** | **0** | **100.0%** | **100.0%** | **100.0%** |
-| **MACRO AVERAGE** | **12** | **-** | **-** | **-** | **100.0%** | **100.0%** | **100.0%** |
+The harness checks 12 programmed rule assertions across the 5 synthetic test documents and 2 clean controls.
 
-- **Clean Baseline Controls Tested**: 2 documents (0 false alarms).
-- **Skipped Documents**: 0
-- **Average Processing Latency**: ~62 ms per page.
+<details>
+<summary>Click to view rule verification breakdown</summary>
+
+| Audit Subsystem | Injected Test Cases | Detections Matched | Clean Controls | Rule Status |
+| :--- | :---: | :---: | :---: | :---: |
+| **Math Discrepancy** (cross-footing & percentages) | 4 | 4 | Passed | Covered |
+| **Semantic Contradiction** (cross-page claims) | 3 | 3 | Passed | Covered |
+| **Temporal Inversion** (milestone sequences) | 4 | 4 | Passed | Covered |
+| **Unit Mismatch** (scale factors & denominations) | 1 | 1 | Passed | Covered |
+| **Total Test Assertions** | **12** | **12** | **0 false alarms on clean docs** | **All 12 programmed rules verified** |
+
+- **Clean Baseline Documents**: 2 documents evaluated with 0 false alarms.
+- **Average Processing Latency**: ~60–70 ms per page on local CPU.
+</details>
 
 ---
 
@@ -139,7 +143,7 @@ Evaluated across **5 synthetic test documents (12 pages total)**:
 │   │   └── orchestrator.py        # Audit orchestrator, health score, and page evidence grading
 │   └── services/                  # Document session store & grounded chat service
 ├── sample_docs/                   # Programmatic test PDF generators
-├── eval/                          # Ground-truth dataset & strict 1-to-1 benchmark runner
+├── eval/                          # Ground-truth dataset & strict 1-to-1 regression evaluation harness
 ├── tests/                         # Unit & integration test suite
 └── frontend/                      # React + TypeScript + Vite modern web UI
 ```
@@ -187,7 +191,7 @@ npm run dev
 ```
 Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
-### 3. Run Synthetic Benchmark Suite
+### 3. Run Automated Regression Suite
 ```bash
 source .venv/bin/activate
 python -m eval.run_benchmark
