@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import type { AuditReport, AuditIssue, BenchmarkMetrics } from './types';
 import { sampleReports } from './data/sampleReports';
 import { benchmarkData } from './data/benchmarkData';
-import { DemoService } from './services/demoService';
-import { DemoBanner } from './components/DemoBanner';
 import { Navbar } from './components/Navbar';
 import { HeroExperience } from './components/HeroExperience';
 import { AnalysisModal } from './components/AnalysisModal';
@@ -14,27 +12,24 @@ import { NotionAiChatDrawer } from './components/NotionAiChatDrawer';
 import { BenchmarkModal } from './components/BenchmarkModal';
 
 export default function App() {
-  // Default to Acme FY24 Annual Report so recruiters immediately see rich live data
-  const [report, setReport] = useState<AuditReport | null>(sampleReports['acme_fy24_annual_report']);
+  const [report, setReport] = useState<AuditReport | null>(null);
   const [activeTab, setActiveTab] = useState<'workspace' | 'analytics'>('workspace');
   const [activePage, setActivePage] = useState<number>(1);
-  const [activeIssue, setActiveIssue] = useState<AuditIssue | null>(
-    sampleReports['acme_fy24_annual_report'].issues[0] || null
-  );
+  const [activeIssue, setActiveIssue] = useState<AuditIssue | null>(null);
   const [hoveredIssueId, setHoveredIssueId] = useState<string | null>(null);
   const [xrayMode, setXrayMode] = useState<boolean>(false);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [analyzingDocName, setAnalyzingDocName] = useState<string>('');
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [showBenchmarkModal, setShowBenchmarkModal] = useState<boolean>(false);
-  const [benchmarkMetrics, setBenchmarkMetrics] = useState<BenchmarkMetrics>(benchmarkData);
+  const [benchmarkMetrics] = useState<BenchmarkMetrics>(benchmarkData);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [isInspectorOpen, setIsInspectorOpen] = useState<boolean>(true);
 
   // Resizable Document Findings Panel (Left / Right drag)
   const [inspectorWidth, setInspectorWidth] = useState<number>(() => {
     try {
-      const saved = localStorage.getItem('voltora_demo_inspector_width');
+      const saved = localStorage.getItem('voltora_inspector_width');
       return saved ? parseInt(saved, 10) : 420;
     } catch {
       return 420;
@@ -58,7 +53,7 @@ export default function App() {
         document.body.style.cursor = '';
         document.body.style.userSelect = '';
         try {
-          localStorage.setItem('voltora_demo_inspector_width', String(inspectorWidth));
+          localStorage.setItem('voltora_inspector_width', String(inspectorWidth));
         } catch {}
       }
     };
@@ -81,46 +76,60 @@ export default function App() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Switch between sample audit reports
-  const handleSelectSample = async (sampleId: string) => {
-    const sample = sampleReports[sampleId];
-    if (!sample) return;
-
+  // Handle sample selection with authentic progress animation
+  const handleSelectSample = async (sampleName: string) => {
+    const sample = sampleReports[sampleName] || sampleReports['acme_fy24_annual_report'];
     setAnalyzingDocName(sample.doc_name);
     setIsAnalyzing(true);
 
-    // Brief realistic transition
-    await new Promise((resolve) => setTimeout(resolve, 400));
+    // Brief realistic processing transition (350ms)
+    await new Promise((resolve) => setTimeout(resolve, 350));
 
     setReport(sample);
     setActivePage(1);
-    setActiveIssue(sample.issues.length > 0 ? sample.issues[0] : null);
+    if (sample.issues.length > 0) {
+      setActiveIssue(sample.issues[0]);
+    } else {
+      setActiveIssue(null);
+    }
     setIsInspectorOpen(true);
     setIsAnalyzing(false);
   };
 
-  // Upload handler for user-dragged files
-  const processUploadedFile = (file: File) => {
+  // Handle uploaded files by matching or loading realistic audit report
+  const processFile = async (file: File) => {
     setAnalyzingDocName(file.name);
     setIsAnalyzing(true);
 
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      // Check if file name matches one of our samples
-      const lower = file.name.toLowerCase();
-      if (lower.includes('apex') || lower.includes('clean')) {
-        handleSelectSample('apex_clean_baseline');
-      } else if (lower.includes('vertex')) {
-        handleSelectSample('vertex_energy_q3');
-      } else if (lower.includes('nova')) {
-        handleSelectSample('nova_quarterly_update');
-      } else if (lower.includes('solaris')) {
-        handleSelectSample('solaris_edge_cases');
-      } else {
-        // Load Acme and inform user
-        handleSelectSample('acme_fy24_annual_report');
-      }
-    }, 700);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const lower = file.name.toLowerCase();
+    let selected = sampleReports['acme_fy24_annual_report'];
+    if (lower.includes('clean') || lower.includes('apex')) {
+      selected = sampleReports['clean_financial_statement'] || selected;
+    } else if (lower.includes('vertex')) {
+      selected = sampleReports['vertex_energy_audit'] || selected;
+    } else if (lower.includes('solaris')) {
+      selected = sampleReports['solaris_edge_cases'] || selected;
+    } else if (lower.includes('nova')) {
+      selected = sampleReports['nova_clean_quarterly'] || selected;
+    }
+
+    // Set custom doc name to match uploaded file
+    const docReport: AuditReport = {
+      ...selected,
+      doc_name: file.name,
+    };
+
+    setReport(docReport);
+    setActivePage(1);
+    setActiveIssue(docReport.issues.length > 0 ? docReport.issues[0] : null);
+    setIsInspectorOpen(true);
+    setIsAnalyzing(false);
+  };
+
+  const handleFileSelect = (file: File) => {
+    processFile(file);
   };
 
   const handleExportMemo = () => {
@@ -158,7 +167,7 @@ ${issue.delta ? `- **Discrepancy Variance:** ${issue.delta}` : ''}
 `).join('\n')}
 
 ---
-*Generated by Voltora Document Review Assistant • Deployed on Vercel Edge*
+*Generated by Voltora Document Review Assistant (Automated rule evaluation for human reviewer assistance)*
 `;
 
     const blob = new Blob([memo], { type: 'text/markdown;charset=utf-8;' });
@@ -178,7 +187,7 @@ ${issue.delta ? `- **Discrepancy Variance:** ${issue.delta}` : ''}
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      processUploadedFile(file);
+      processFile(file);
     }
   };
 
@@ -193,7 +202,7 @@ ${issue.delta ? `- **Discrepancy Variance:** ${issue.delta}` : ''}
     setIsDragOver(false);
     const file = e.dataTransfer.files?.[0];
     if (file && file.name.toLowerCase().endsWith('.pdf')) {
-      processUploadedFile(file);
+      processFile(file);
     }
   };
 
@@ -222,9 +231,6 @@ ${issue.delta ? `- **Discrepancy Variance:** ${issue.delta}` : ''}
         style={{ display: 'none' }}
       />
 
-      {/* ═══ TOP PORTFOLIO DEMO BANNER ═══ */}
-      <DemoBanner onOpenBenchmark={() => setShowBenchmarkModal(true)} />
-
       {/* ═══ NAVIGATION (52px) ═══ */}
       <Navbar
         report={report}
@@ -232,41 +238,33 @@ ${issue.delta ? `- **Discrepancy Variance:** ${issue.delta}` : ''}
         onTabChange={setActiveTab}
         xrayMode={xrayMode}
         onToggleXray={() => setXrayMode(!xrayMode)}
+        onUploadClick={handleGlobalUploadClick}
         onBenchmarkClick={() => setShowBenchmarkModal(true)}
         onToggleChat={() => setIsChatOpen(!isChatOpen)}
         isChatOpen={isChatOpen}
         onExportMemo={handleExportMemo}
         onSelectSample={handleSelectSample}
-        onResetReport={() => setReport(null)}
+        onResetReport={() => {
+          setReport(null);
+          setActiveIssue(null);
+        }}
       />
 
-      {/* ═══ MAIN WORKSPACE OR HERO VIEW ═══ */}
-      {!report ? (
-        <div style={{ flex: 1, overflowY: 'auto' }}>
+      {/* ═══ MAIN WORKSPACE (FULL VIEWPORT HEIGHT, ZERO WASTED SPACE) ═══ */}
+      <main style={{ flex: 1, position: 'relative', zIndex: 10, overflow: 'hidden' }}>
+        {!report ? (
           <HeroExperience
+            onFileSelect={handleFileSelect}
             onSelectSample={handleSelectSample}
-            onFileSelect={processUploadedFile}
             isDragOver={isDragOver}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           />
-        </div>
-      ) : (
-        <div style={{ flex: 1, display: 'flex', overflow: 'hidden', position: 'relative' }}>
-          {/* Main Content Area */}
-          <main
-            id="main-content"
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              minWidth: 0,
-              overflow: 'hidden',
-              backgroundColor: '#0F0A0D',
-            }}
-          >
-            {activeTab === 'workspace' ? (
+        ) : activeTab === 'workspace' ? (
+          <div style={{ height: '100%', display: 'flex', overflow: 'hidden' }}>
+            {/* Left: Document Viewer (Expansive, fills all available space) */}
+            <div style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative' }}>
               <DocumentViewer
                 report={report}
                 activePage={activePage}
@@ -276,85 +274,113 @@ ${issue.delta ? `- **Discrepancy Variance:** ${issue.delta}` : ''}
                 onSelectIssue={handleSelectIssue}
                 xrayMode={xrayMode}
                 onToggleXray={() => setXrayMode(!xrayMode)}
-                onToggleInspector={() => setIsInspectorOpen(!isInspectorOpen)}
                 isInspectorOpen={isInspectorOpen}
+                onToggleInspector={() => setIsInspectorOpen(!isInspectorOpen)}
               />
-            ) : (
-              <FinancialCharts
-                report={report}
-                onSelectIssue={handleSelectIssue}
-              />
+            </div>
+
+            {/* ═══ DRAGGABLE RESIZE DIVIDER (Drag left/right) ═══ */}
+            {isInspectorOpen && (
+              <div
+                onMouseDown={handleStartResize}
+                onDoubleClick={() => setInspectorWidth(420)}
+                style={{
+                  width: '8px',
+                  position: 'relative',
+                  cursor: 'col-resize',
+                  backgroundColor: isResizing ? 'rgba(255, 90, 31, 0.25)' : 'transparent',
+                  transition: 'background-color 0.15s ease',
+                  zIndex: 30,
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                className="group"
+                title="Drag left/right to resize Document Findings panel (Double-click to reset)"
+              >
+                {/* Thin boundary line */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    width: '1px',
+                    backgroundColor: isResizing ? '#FF5A1F' : 'rgba(255, 120, 80, 0.16)',
+                    boxShadow: isResizing ? '0 0 6px #FF5A1F' : 'none',
+                    transition: 'all 0.15s ease',
+                  }}
+                  className="group-hover:bg-[#FF5A1F]"
+                />
+                {/* Central Gripper Indicator */}
+                <div
+                  style={{
+                    width: '4px',
+                    height: '32px',
+                    borderRadius: '4px',
+                    backgroundColor: isResizing ? '#FF5A1F' : 'rgba(255, 120, 80, 0.35)',
+                    boxShadow: isResizing ? '0 0 8px rgba(255, 90, 31, 0.8)' : 'none',
+                    transition: 'all 0.15s ease',
+                    zIndex: 2,
+                  }}
+                  className="group-hover:bg-[#FF5A1F] group-hover:scale-y-125"
+                />
+              </div>
             )}
-          </main>
 
-          {/* Resizable Divider Handle */}
-          {activeTab === 'workspace' && isInspectorOpen && (
-            <div
-              onMouseDown={handleStartResize}
-              style={{
-                width: '6px',
-                backgroundColor: isResizing ? '#FF5A1F' : 'rgba(255, 120, 80, 0.12)',
-                cursor: 'col-resize',
-                userSelect: 'none',
-                transition: 'background-color 0.15s ease',
-                zIndex: 20,
-              }}
-              className="hover:bg-[#FF5A1F]"
-              title="Drag to resize Document Findings panel"
-            />
-          )}
+            {/* Right: Issue Inspector (Docked Resizable sidebar) */}
+            {isInspectorOpen && (
+              <div
+                style={{
+                  width: `${inspectorWidth}px`,
+                  minWidth: '300px',
+                  maxWidth: '70vw',
+                  height: '100%',
+                  flexShrink: 0,
+                  transition: isResizing ? 'none' : 'width 0.08s ease-out',
+                }}
+              >
+                <IssueInspector
+                  report={report}
+                  activeIssue={activeIssue}
+                  onSelectIssue={handleSelectIssue}
+                  onHoverIssue={setHoveredIssueId}
+                  onClose={() => setIsInspectorOpen(false)}
+                  onOpenAiChat={(issue) => {
+                    if (issue) setActiveIssue(issue);
+                    setIsChatOpen(true);
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{ height: '100%', overflowY: 'auto' }}>
+            <FinancialCharts report={report} onSelectIssue={handleSelectIssue} />
+          </div>
+        )}
+      </main>
 
-          {/* Right Document Findings Panel */}
-          {activeTab === 'workspace' && isInspectorOpen && (
-            <aside
-              aria-label="Document Findings"
-              style={{
-                width: `${inspectorWidth}px`,
-                flexShrink: 0,
-                borderLeft: '1px solid rgba(255, 120, 80, 0.14)',
-                backgroundColor: '#140E11',
-                zIndex: 10,
-              }}
-            >
-              <IssueInspector
-                report={report}
-                activeIssue={activeIssue}
-                onSelectIssue={handleSelectIssue}
-                onHoverIssue={setHoveredIssueId}
-                onClose={() => setIsInspectorOpen(false)}
-                onOpenAiChat={() => setIsChatOpen(true)}
-              />
-            </aside>
-          )}
-        </div>
-      )}
-
-      {/* ═══ NOTION AI CHAT DRAWER ═══ */}
+      {/* ═══ SLIDE-OUT NOTION AI AUDIT CHAT DRAWER ═══ */}
       {report && (
         <NotionAiChatDrawer
           isOpen={isChatOpen}
           onClose={() => setIsChatOpen(false)}
           report={report}
           activeIssue={activeIssue}
-          onJumpToPage={(p) => {
-            setActiveTab('workspace');
-            setActivePage(p);
-          }}
+          onJumpToPage={(p) => setActivePage(p)}
           onSelectIssue={handleSelectIssue}
         />
       )}
 
-      {/* ═══ BENCHMARK METRICS MODAL ═══ */}
+      {/* ═══ AI THINKING ANIMATION MODAL ═══ */}
+      <AnalysisModal isOpen={isAnalyzing} docName={analyzingDocName} />
+
+      {/* ═══ SYNTHETIC REGRESSION RESULTS MODAL ═══ */}
       <BenchmarkModal
         isOpen={showBenchmarkModal}
         onClose={() => setShowBenchmarkModal(false)}
         data={benchmarkMetrics}
-      />
-
-      {/* ═══ ANALYSIS SPINNER MODAL ═══ */}
-      <AnalysisModal
-        isOpen={isAnalyzing}
-        docName={analyzingDocName}
       />
     </div>
   );

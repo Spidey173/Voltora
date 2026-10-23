@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ShieldAlert,
   Sparkles,
@@ -7,12 +7,9 @@ import {
   Activity,
   Download,
   X,
-  ChevronDown,
-  Check,
-  Zap,
+  Lock,
 } from 'lucide-react';
 import type { AuditReport } from '../types';
-import { sampleReportsList } from '../data/sampleReports';
 
 interface NavbarProps {
   report: AuditReport | null;
@@ -20,11 +17,12 @@ interface NavbarProps {
   onTabChange: (tab: 'workspace' | 'analytics') => void;
   xrayMode: boolean;
   onToggleXray: () => void;
+  onUploadClick: () => void;
   onBenchmarkClick: () => void;
   onToggleChat: () => void;
   isChatOpen: boolean;
   onExportMemo?: () => void;
-  onSelectSample: (sampleId: string) => void;
+  onSelectSample?: (sampleName: string) => void;
   onResetReport?: () => void;
 }
 
@@ -36,11 +34,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleChat,
   isChatOpen,
   onExportMemo,
-  onSelectSample,
   onResetReport,
 }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
   return (
     <header
       style={{
@@ -48,17 +43,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         top: 0,
         zIndex: 50,
         height: '52px',
-        backgroundColor: 'rgba(14, 9, 12, 0.94)',
+        backgroundColor: 'rgba(12, 8, 10, 0.90)',
         backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid rgba(255, 120, 80, 0.14)',
+        borderBottom: '1px solid rgba(255, 120, 80, 0.12)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 18px',
+        padding: '0 20px',
       }}
     >
-      {/* ═══ LEFT: BRAND & SAMPLE DOCUMENT SWITCHER ═══ */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+      {/* ═══ LEFT: BRAND & ACTIVE DOCUMENT ═══ */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         <div
           onClick={onResetReport}
           style={{
@@ -67,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             gap: '9px',
             cursor: onResetReport ? 'pointer' : 'default',
           }}
-          title={onResetReport ? 'Back to Overview' : 'Voltora Auditor'}
+          title={onResetReport ? 'Back to Document Upload & Home' : 'Voltora Auditor'}
         >
           <div
             style={{
@@ -109,109 +104,78 @@ export const Navbar: React.FC<NavbarProps> = ({
                 letterSpacing: '0.05em',
               }}
             >
-              Demo
+              Auditor
+            </span>
+            <span
+              style={{
+                fontSize: '10px',
+                color: '#BCA3A7',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 120, 80, 0.16)',
+                padding: '1px 6px',
+                borderRadius: '4px',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '3px',
+              }}
+              title="Local Single-User Architecture: No authentication or multi-tenant isolation. Intended for local desktop use."
+            >
+              <Lock size={9} color="#FF7036" />
+              <span>Single-User</span>
             </span>
           </div>
         </div>
 
-        {/* Interactive Sample Document Dropdown */}
-        <div style={{ position: 'relative' }}>
-          <button
-            onClick={() => setDropdownOpen(!dropdownOpen)}
+        {/* Current Document Pill with Close / New Audit button */}
+        {report && (
+          <div
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              backgroundColor: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 120, 80, 0.18)',
-              padding: '5px 11px',
-              borderRadius: '7px',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 120, 80, 0.14)',
+              padding: '4px 10px',
+              borderRadius: '6px',
               fontSize: '12px',
               color: '#FFF1EE',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
             }}
-            className="hover:border-[#FF5A1F]"
-            title="Switch sample audit document"
           >
             <FileText size={13} color="#FF5A1F" />
-            <span style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>
-              {report ? report.doc_name : 'Select Sample Document'}
+            <span style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>
+              {report.doc_name}
             </span>
-            {report && (
-              <span style={{ color: '#806B70', fontSize: '11px' }}>
-                ({report.total_pages} {report.total_pages === 1 ? 'pg' : 'pgs'})
-              </span>
+            <span style={{ color: '#806B70' }}>•</span>
+            <span style={{ color: '#BCA3A7' }}>{report.total_pages} {report.total_pages === 1 ? 'page' : 'pages'}</span>
+            
+            {onResetReport && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onResetReport();
+                }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#806B70',
+                  cursor: 'pointer',
+                  padding: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginLeft: '4px',
+                }}
+                className="hover:text-[#FF3838]"
+                title="Close document and return to upload"
+              >
+                <X size={13} />
+              </button>
             )}
-            <ChevronDown size={13} color="#BCA3A7" />
-          </button>
-
-          {dropdownOpen && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                marginTop: '6px',
-                width: '320px',
-                backgroundColor: '#1A1216',
-                border: '1px solid rgba(255, 120, 80, 0.22)',
-                borderRadius: '8px',
-                boxShadow: '0 12px 36px rgba(0,0,0,0.65)',
-                zIndex: 100,
-                padding: '6px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '4px',
-              }}
-            >
-              <div style={{ padding: '6px 8px 4px 8px', fontSize: '10px', color: '#806B70', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
-                Pre-Audited Test Documents
-              </div>
-
-              {sampleReportsList.map((sample) => {
-                const isSelected = report?.doc_id === sample.id;
-                return (
-                  <button
-                    key={sample.id}
-                    onClick={() => {
-                      onSelectSample(sample.id);
-                      setDropdownOpen(false);
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '8px 10px',
-                      borderRadius: '6px',
-                      border: 'none',
-                      backgroundColor: isSelected ? 'rgba(255, 90, 31, 0.15)' : 'transparent',
-                      color: isSelected ? '#FFA87D' : '#FFF1EE',
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      fontSize: '12px',
-                      transition: 'background 0.12s ease',
-                    }}
-                    className="hover:bg-[rgba(255,255,255,0.05)]"
-                  >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', maxWidth: '240px' }}>
-                      <div style={{ fontWeight: isSelected ? 700 : 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {sample.title}
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#806B70' }}>
-                        {sample.pages} pages • {sample.issuesCount === 0 ? 'Clean (Grade A+)' : `${sample.issuesCount} issues detected`}
-                      </div>
-                    </div>
-                    {isSelected && <Check size={14} color="#FF7036" />}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* ═══ CENTER: VIEW SWITCHER ═══ */}
+      {/* ═══ CENTER: CLEAN VIEW SWITCHER ═══ */}
       {report && (
         <div
           style={{
@@ -270,11 +234,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       )}
 
-      {/* ═══ RIGHT: REVIEW STATUS & ACTIONS ═══ */}
+      {/* ═══ RIGHT: STREAMLINED REVIEW STATUS & ACTIONS ═══ */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         {report && (
           <>
-            {/* Health Pill (Clickable -> Opens Benchmark Suite) */}
+            {/* Unified Audit Health Pill */}
             <div
               onClick={onBenchmarkClick}
               style={{
@@ -346,7 +310,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {/* AI Review Copilot Drawer */}
+            {/* AI Copilot Drawer */}
             <button
               onClick={onToggleChat}
               className="btn-secondary"
@@ -357,23 +321,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 backgroundColor: isChatOpen ? 'rgba(255, 90, 31, 0.16)' : 'rgba(255, 255, 255, 0.03)',
                 color: isChatOpen ? '#FFA87D' : '#FFF1EE',
               }}
-              title="Open AI Review Assistant"
             >
               <Sparkles size={13} color="#FF7036" />
               <span>Ask AI</span>
             </button>
           </>
         )}
-
-        <button
-          onClick={onBenchmarkClick}
-          className="btn-secondary"
-          style={{ padding: '6px 10px', fontSize: '12px' }}
-          title="Synthetic Regression Results"
-        >
-          <Zap size={13} color="#FF5A1F" />
-          <span>Regression</span>
-        </button>
       </div>
     </header>
   );
