@@ -2,7 +2,10 @@
 
 A self-contained, zero-cold-start interactive web demo of **Voltora** designed for instant hosting on **Vercel**, GitHub Pages, or any Edge CDN.
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-voltora17.vercel.app-FF5A1F?style=for-the-badge&logo=vercel)](https://voltora17.vercel.app)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FSpidey173%2FVoltora&root-directory=demo)
+
+> 🚀 **Live Production Site:** **[https://voltora17.vercel.app](https://voltora17.vercel.app)**
 
 ---
 
