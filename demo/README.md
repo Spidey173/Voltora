@@ -11,7 +11,7 @@ A self-contained, zero-cold-start interactive web demo of **Voltora** designed f
 
 ## 🎯 Why This Demo Folder?
 
-Full forensic document review platforms typically require heavy Python runtimes (`PyMuPDF`, `uvicorn`, OCR engines) that suffer from 15–30 second cold starts on serverless platforms and cost money to keep alive.
+Full multi-dimensional document review platforms typically require heavy Python runtimes (`PyMuPDF`, `uvicorn`, OCR engines) that suffer from 15–30 second cold starts on serverless platforms and cost money to keep alive.
 
 This `demo/` package delivers the **exact same UI and interactive experience** with **0ms latency**:
 - **Pre-Audited Test Corpus:** Includes all 5 synthetic benchmark documents (Acme Corp 8-finding report, Apex Clean Baseline, Vertex Energy, Nova Quarterly, and Solaris AI).
