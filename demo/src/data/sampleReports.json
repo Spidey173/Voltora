@@ -1,0 +1,2578 @@
+{
+  "acme_fy24_annual_report": {
+    "doc_id": "acme_fy24_annual_report",
+    "doc_name": "Acme Fy24 Annual Report",
+    "total_pages": 4,
+    "summary": {
+      "health_score": 5,
+      "grade": "F",
+      "total_issues": 8,
+      "critical_count": 8,
+      "warning_count": 0,
+      "info_count": 0,
+      "deterministic_count": 5,
+      "heuristic_count": 3,
+      "needs_review_count": 0,
+      "passed_checks_count": 11,
+      "verified_claims_count": 11,
+      "tables_analyzed": 2,
+      "pages_analyzed": 4,
+      "audit_duration_ms": 18.1
+    },
+    "issues": [
+      {
+        "id": "sem-contra-1-3-88dcad",
+        "title": "Direct Metric Contradiction: 12.0% vs 14.0%",
+        "description": "Page 1 claims 'total consolidated revenue growth' reached 12.0%, while Page 3 reports 14.0% for the same indicator.",
+        "category": "semantic_contradiction",
+        "severity": "critical",
+        "confidence": 0.94,
+        "check_type": "heuristic",
+        "status": "confirmed",
+        "explanation": "Heuristic cross-page comparison: evaluated metric 'Revenue Growth' across Page 1 (stated 12.0%) and Page 3 (stated 14.0%). Both statements refer to the same indicator and comparable period (2024), resulting in a direct numerical divergence of 2.00%.",
+        "primary_anchor": {
+          "page": 1,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.19126932548754144,
+            "x1": 0.9114202362260008,
+            "y1": 0.2103526568171954
+          },
+          "text": "across all product lines. Total consolidated revenue growth accelerated to 12% in FY2024, representing",
+          "label": "Claim on Page 1"
+        },
+        "secondary_anchor": {
+          "page": 3,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.41692976518110797,
+            "x1": 0.9004019942938113,
+            "y1": 0.4360131157769097
+          },
+          "text": "Note 1: Total consolidated revenue implies 14% year-over-year revenue expansion when compared to",
+          "label": "Conflicting Statement on Page 3"
+        },
+        "expected_value": "Consistent figure (12.0% or 14.0%)",
+        "actual_value": "P.1: 12.0% | P.3: 14.0%",
+        "delta": "Mutually exclusive statements",
+        "suggested_fix": "Verify official source data and align metric to either 12.0% or 14.0% consistently.",
+        "created_at": 1792774362.345454
+      },
+      {
+        "id": "sem-contra-1-3-06dac8",
+        "title": "Polar Semantic Contradiction: Capital Structure / Debt Mismatch",
+        "description": "Page 1 asserts an absolute state that is contradicted by Page 3 for the same period.",
+        "category": "semantic_contradiction",
+        "severity": "critical",
+        "confidence": 0.94,
+        "check_type": "heuristic",
+        "status": "confirmed",
+        "explanation": "Heuristic semantic comparison: identified mutually exclusive representations for 'Capital Structure / Debt' during 2029. Page 1 asserts 'none' state (quote: \"We maintained a strict zero-debt capital structure, carrying zero long-term debt...\"), while Page 3 asserts 'active' state (quote: \"issued $120M convertible debt notes due 2029....\").",
+        "primary_anchor": {
+          "page": 1,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.27332770222365255,
+            "x1": 0.8913791631561478,
+            "y1": 0.2924110335533065
+          },
+          "text": "We maintained a strict zero-debt capital structure, carrying zero long-term debt and no external credit",
+          "label": "Claim on Page 1"
+        },
+        "secondary_anchor": {
+          "page": 3,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.47847350920089565,
+            "x1": 0.4659018921696283,
+            "y1": 0.49755685979669745
+          },
+          "text": "issued $120M convertible debt notes due 2029.",
+          "label": "Conflicting Statement on Page 3"
+        },
+        "expected_value": "Mutually aligned factual statements",
+        "actual_value": "P.1: \"We maintained a strict zero-debt capital structure, carrying...\" vs P.3: \"issued $120M convertible debt notes due 2029....\"",
+        "delta": "Mutually exclusive statements",
+        "suggested_fix": "Reconcile contradictory factual representations prior to publication or filing.",
+        "created_at": 1792774362.345475
+      },
+      {
+        "id": "sem-contra-1-2-d5222c",
+        "title": "Polar Semantic Contradiction: Operational Footprint Mismatch",
+        "description": "Page 1 asserts an absolute state that is contradicted by Page 2 for the same period.",
+        "category": "semantic_contradiction",
+        "severity": "critical",
+        "confidence": 0.94,
+        "check_type": "heuristic",
+        "status": "confirmed",
+        "explanation": "Heuristic semantic comparison: identified mutually exclusive representations for 'Operational Footprint' during 2024. Page 1 asserts 'none' state (quote: \"Furthermore, management has maintained a focused domestic footprint, with no for...\"), while Page 2 asserts 'active' state (quote: \"3. Global Expansion & Infrastructure To support expanding multinational enterpri...\").",
+        "primary_anchor": {
+          "page": 1,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.33487138844499686,
+            "x1": 0.9063875285628574,
+            "y1": 0.3744693332248264
+          },
+          "text": "Furthermore, management has maintained a focused domestic footprint, with no foreign subsidiaries or international operations during the year ending December 31, 2024.",
+          "label": "Claim on Page 1"
+        },
+        "secondary_anchor": {
+          "page": 2,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.25281310803962476,
+            "x1": 0.8585048501008476,
+            "y1": 0.3129255506727431
+          },
+          "text": "3. Global Expansion & Infrastructure To support expanding multinational enterprise accounts, subsidiary operations were formally established in the European Union and Asia-Pacific regions during the second half of fiscal 2024.",
+          "label": "Conflicting Statement on Page 2"
+        },
+        "expected_value": "Mutually aligned factual statements",
+        "actual_value": "P.1: \"Furthermore, management has maintained a focused domestic fo...\" vs P.2: \"3. Global Expansion & Infrastructure To support expanding mu...\"",
+        "delta": "Mutually exclusive statements",
+        "suggested_fix": "Reconcile contradictory factual representations prior to publication or filing.",
+        "created_at": 1792774362.345493
+      },
+      {
+        "id": "temp-invert-1-7e062c",
+        "title": "Chronological Period Inversion: '2024' labeled as prior to '2023'",
+        "description": "Text designates year 2024 as preceding or prior to year 2023, inverting the actual chronological sequence.",
+        "category": "temporal_inversion",
+        "severity": "critical",
+        "confidence": 0.98,
+        "check_type": "deterministic",
+        "status": "confirmed",
+        "explanation": "Deterministic chronological verification: analyzed temporal relationship between '2024' and '2023'. Text designates year 2024 as prior/preceding to year 2023, but chronologically 2024 >= 2023.",
+        "primary_anchor": {
+          "page": 1,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.3964151709970802,
+            "x1": 0.9043924169602737,
+            "y1": 0.4154985215928819
+          },
+          "text": "Prior year comparisons reflect operations from fiscal 2024 compared to 2023, establishing the baseline",
+          "label": "Chronological Claim"
+        },
+        "secondary_anchor": null,
+        "expected_value": "Prior year: 2023, Current year: 2024",
+        "actual_value": "Prior: 2024, Current: 2023",
+        "delta": "Inverted timeline",
+        "suggested_fix": "Reverse the references: year 2023 should be the prior year and 2024 the subsequent year.",
+        "created_at": 1792774362.331281
+      },
+      {
+        "id": "math-dist-2-a75ef4",
+        "title": "Percentage Distribution Does Not Equal 100% (Sum: 90.0%)",
+        "description": "Segment allocations (40.0% + 30.0% + 20.0% = 90.0%) fail to reconcile to 100.0%. Discrepancy of 10.0 percentage points.",
+        "category": "math_discrepancy",
+        "severity": "critical",
+        "confidence": 0.99,
+        "check_type": "deterministic",
+        "status": "confirmed",
+        "explanation": "Deterministic addition check: summed components (40.0% + 30.0% + 20.0%) = 90.0%; expected 100.0%; variance = 10.0%.",
+        "primary_anchor": {
+          "page": 2,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.1297255429354581,
+            "x1": 0.8254148196550756,
+            "y1": 0.23086725100122316
+          },
+          "text": "2. Segment Revenue Contribution Revenue contributions across our primary divisions in fiscal 2024 were distributed as fo",
+          "label": "Percentage Allocation"
+        },
+        "secondary_anchor": null,
+        "expected_value": "100.0%",
+        "actual_value": "90.0%",
+        "delta": "10.0%",
+        "suggested_fix": "Reconcile percentage components to sum to exactly 100.0% (currently 90.0%).",
+        "created_at": 1792774362.330467
+      },
+      {
+        "id": "temp-seq-2-2-d0260e",
+        "title": "Temporal Anomaly: 'Project Genesis' Completion Precedes Inception Date",
+        "description": "Completion of Project Genesis is reported in March 2023, yet project kickoff is stated as occurring later in November 2023.",
+        "category": "temporal_inversion",
+        "severity": "critical",
+        "confidence": 0.96,
+        "check_type": "deterministic",
+        "status": "confirmed",
+        "explanation": "Deterministic timeline comparison: evaluated milestone sequence for 'Project Genesis'. Completion is dated March 2023 (timestamp: 202303), which chronologically precedes kickoff/inception date November 2023 (timestamp: 202311).",
+        "primary_anchor": {
+          "page": 2,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.3759005768130524,
+            "x1": 0.5766927183063981,
+            "y1": 0.3949839274088542
+          },
+          "text": "while Project Genesis kickoff commenced in November 2023.",
+          "label": "Kickoff Anchor (November 2023)"
+        },
+        "secondary_anchor": {
+          "page": 2,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.3553859826290246,
+            "x1": 0.9103416492736417,
+            "y1": 0.3744693332248264
+          },
+          "text": "Under our corporate R&D initiative, Project Genesis milestone completion was achieved in March 2023,",
+          "label": "Completion Anchor (March 2023)"
+        },
+        "expected_value": "Initiation date must precede March 2023",
+        "actual_value": "Kickoff: November 2023 vs Completion: March 2023",
+        "delta": "November 2023 > March 2023",
+        "suggested_fix": "Align chronological dates so kickoff precedes completion.",
+        "created_at": 1792774362.331978
+      },
+      {
+        "id": "unit-scale-2-4-128ea7",
+        "title": "Scale Order-of-Magnitude Mismatch: 'B' vs 'M'",
+        "description": "'Operating Expenses' is quoted as Operating expenses for the segment totaled $42.5B on Page 2, but reported as Consolidated operating expenditures aggregated to $42.5M on Page 4 (Factor of 1,000x difference).",
+        "category": "unit_mismatch",
+        "severity": "critical",
+        "confidence": 0.97,
+        "check_type": "deterministic",
+        "status": "confirmed",
+        "explanation": "Deterministic scale comparison: evaluated 'Operating Expenses' across Page 2 (Operating expenses for the segment totaled $42.5B) and Page 4 (Consolidated operating expenditures aggregated to $42.5M). Detected an order-of-magnitude scale divergence of 1,000x ('B' vs 'M') for comparable reporting context.",
+        "primary_anchor": {
+          "page": 2,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.43744432083284013,
+            "x1": 0.8855017369089563,
+            "y1": 0.45652767142864187
+          },
+          "text": "Operating expenses for the segment totaled $42.5B",
+          "label": "Page 2 Scale: b"
+        },
+        "secondary_anchor": {
+          "page": 4,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.15024013711948586,
+            "x1": 0.7905636955710018,
+            "y1": 0.16932346844913984
+          },
+          "text": "Consolidated operating expenditures aggregated to $42.5M",
+          "label": "Page 4 Scale: m"
+        },
+        "expected_value": "Consistent scale for 'Operating Expenses'",
+        "actual_value": "b vs m",
+        "delta": "1,000x discrepancy",
+        "suggested_fix": "Standardize units across Page 2 and Page 4.",
+        "created_at": 1792774362.333952
+      },
+      {
+        "id": "math-tbl-3-0-1",
+        "title": "Table Summation Mismatch in 'Stated Amount'",
+        "description": "Column items sum up to 145.00, but the stated 'Total Consolidated Revenue' is 165.00. Discrepancy of 20.00.",
+        "category": "math_discrepancy",
+        "severity": "critical",
+        "confidence": 0.99,
+        "check_type": "deterministic",
+        "status": "confirmed",
+        "explanation": "Deterministic cross-footing: summed 3 numeric rows (85.00 + 35.00 + 25.00) = 145.00; stated total is 165.00; variance = 20.00.",
+        "primary_anchor": {
+          "page": 3,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.232298513855597,
+            "x1": 0.36497869055255566,
+            "y1": 0.251381845185251
+          },
+          "text": "Total Consolidated Revenue: $165 (Computed sum of components: 145.00)",
+          "label": "Stated Table Total"
+        },
+        "secondary_anchor": null,
+        "expected_value": "145.00",
+        "actual_value": "165.00",
+        "delta": "20.00",
+        "suggested_fix": "Update table total to 145.00 or review individual line items.",
+        "created_at": 1792774362.329398
+      }
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "text_spans": [
+          {
+            "text": "ACME CORPORATION",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.27897384743285336,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "ANNUAL REPORT FOR FISCAL YEAR 2024",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.4508039187761693,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "MANAGEMENT DISCUSSION & EXECUTIVE SUMMARY",
+            "bbox": [
+              0.08823529411764706,
+              0.10921102581602155,
+              0.5546209796581393,
+              0.1282943571456755
+            ]
+          },
+          {
+            "text": "ACME CORPORATION ANNUAL REPORT FOR FISCAL YEAR 2024 MANAGEMENT DISCUSSION & EXECUTIVE SUMMARY",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.5546209796581393,
+              0.1282943571456755
+            ]
+          },
+          {
+            "text": "1. Executive Overview & Strategic Direction",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.4348430758208231,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "During fiscal year 2024, Acme Corporation demonstrated unprecedented operational acceleration",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.8624591702729268,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "across all product lines. Total consolidated revenue growth accelerated to 12% in FY2024, representing",
+            "bbox": [
+              0.08823529411764706,
+              0.19126932548754144,
+              0.9114202362260008,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "sustainable momentum despite macroeconomic headwinds.",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.5647220486908956,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "1. Executive Overview & Strategic Direction During fiscal year 2024, Acme Corporation demonstrated unprecedented operational acceleration across all product lines. Total consolidated revenue growth accelerated to 12% in FY2024, representing sustainable momentum despite macroeconomic headwinds.",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.9114202362260008,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Executive Overview & Strategic Direction During fiscal year 2024, Acme Corporation demonstrated unprecedented operational acceleration across all product lines.",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.9114202362260008,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Total consolidated revenue growth accelerated to 12% in FY2024, representing sustainable momentum despite macroeconomic headwinds.",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.9114202362260008,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Our disciplined capital allocation strategy enabled us to fund all expansion from operational cash flow.",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.8964297226051879,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "We maintained a strict zero-debt capital structure, carrying zero long-term debt and no external credit",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.8913791631561478,
+              0.2924110335533065
+            ]
+          },
+          {
+            "text": "facilities on our balance sheet throughout the fiscal period.",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.5517989513920802,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "Our disciplined capital allocation strategy enabled us to fund all expansion from operational cash flow. We maintained a strict zero-debt capital structure, carrying zero long-term debt and no external credit facilities on our balance sheet throughout the fiscal period.",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.8964297226051879,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "We maintained a strict zero-debt capital structure, carrying zero long-term debt and no external credit facilities on our balance sheet throughout the fiscal period.",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.8964297226051879,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "Furthermore, management has maintained a focused domestic footprint, with no foreign subsidiaries or",
+            "bbox": [
+              0.08823529411764706,
+              0.33487138844499686,
+              0.9063875285628574,
+              0.3539547390407986
+            ]
+          },
+          {
+            "text": "international operations during the year ending December 31, 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.3553859826290246,
+              0.6267319224239175,
+              0.3744693332248264
+            ]
+          },
+          {
+            "text": "Furthermore, management has maintained a focused domestic footprint, with no foreign subsidiaries or international operations during the year ending December 31, 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.33487138844499686,
+              0.9063875285628574,
+              0.3744693332248264
+            ]
+          },
+          {
+            "text": "Prior year comparisons reflect operations from fiscal 2024 compared to 2023, establishing the baseline",
+            "bbox": [
+              0.08823529411764706,
+              0.3964151709970802,
+              0.9043924169602737,
+              0.4154985215928819
+            ]
+          },
+          {
+            "text": "for operational margins.",
+            "bbox": [
+              0.08823529411764706,
+              0.41692976518110797,
+              0.27703261531256385,
+              0.4360131157769097
+            ]
+          },
+          {
+            "text": "Prior year comparisons reflect operations from fiscal 2024 compared to 2023, establishing the baseline for operational margins.",
+            "bbox": [
+              0.08823529411764706,
+              0.3964151709970802,
+              0.9043924169602737,
+              0.4360131157769097
+            ]
+          }
+        ],
+        "evidence_score": 0.15,
+        "issue_ids": [
+          "sem-contra-1-3-88dcad",
+          "sem-contra-1-3-06dac8",
+          "sem-contra-1-2-d5222c",
+          "temp-invert-1-7e062c"
+        ]
+      },
+      {
+        "page": 2,
+        "text_spans": [
+          {
+            "text": "ACME CORPORATION",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.27897384743285336,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "OPERATIONAL HIGHLIGHTS & SEGMENT REVIEW",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.5177026885786867,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "ACME CORPORATION OPERATIONAL HIGHLIGHTS & SEGMENT REVIEW",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.5177026885786867,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "2. Segment Revenue Contribution",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.3589754291609222,
+              0.14880887426511205
+            ]
+          },
+          {
+            "text": "Revenue contributions across our primary divisions in fiscal 2024 were distributed as follows:",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.8254148196550756,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "- North America Enterprise: 40% of consolidated bookings",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.5497498855092167,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "- Cloud & Infrastructure Services: 30% of consolidated bookings",
+            "bbox": [
+              0.08823529411764706,
+              0.19126932548754144,
+              0.5967155406677646,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "- Digital Transformation Solutions: 20% of consolidated bookings",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.6027008754755158,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "2. Segment Revenue Contribution Revenue contributions across our primary divisions in fiscal 2024 were distributed as follows: - North America Enterprise: 40% of consolidated bookings - Cloud & Infrastructure Services: 30% of consolidated bookings - Digital Transformation Solutions: 20% of consolidated bookings",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8254148196550756,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Segment Revenue Contribution Revenue contributions across our primary divisions in fiscal 2024 were distributed as follows: - North America Enterprise: 40% of consolidated bookings - Cloud & Infrastructure Services: 30% of consolidated bookings - Digital Transformation Solutions: 20% of consolidated bookings",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8254148196550756,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "3. Global Expansion & Infrastructure",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.3769492604374106,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "To support expanding multinational enterprise accounts, subsidiary operations were formally",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.8214605992136438,
+              0.2924110335533065
+            ]
+          },
+          {
+            "text": "established in the European Union and Asia-Pacific regions during the second half of fiscal 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.8585048501008476,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "3. Global Expansion & Infrastructure To support expanding multinational enterprise accounts, subsidiary operations were formally established in the European Union and Asia-Pacific regions during the second half of fiscal 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.8585048501008476,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "Global Expansion & Infrastructure To support expanding multinational enterprise accounts, subsidiary operations were formally established in the European Union and Asia-Pacific regions during the second half of fiscal 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.8585048501008476,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "4. Technology Roadmap Milestones",
+            "bbox": [
+              0.08823529411764706,
+              0.33487138844499686,
+              0.37493619731828276,
+              0.3539547390407986
+            ]
+          },
+          {
+            "text": "Under our corporate R&D initiative, Project Genesis milestone completion was achieved in March 2023,",
+            "bbox": [
+              0.08823529411764706,
+              0.3553859826290246,
+              0.9103416492736417,
+              0.3744693332248264
+            ]
+          },
+          {
+            "text": "while Project Genesis kickoff commenced in November 2023.",
+            "bbox": [
+              0.08823529411764706,
+              0.3759005768130524,
+              0.5766927183063981,
+              0.3949839274088542
+            ]
+          },
+          {
+            "text": "4. Technology Roadmap Milestones Under our corporate R&D initiative, Project Genesis milestone completion was achieved in March 2023, while Project Genesis kickoff commenced in November 2023.",
+            "bbox": [
+              0.08823529411764706,
+              0.33487138844499686,
+              0.9103416492736417,
+              0.3949839274088542
+            ]
+          },
+          {
+            "text": "Technology Roadmap Milestones Under our corporate R&D initiative, Project Genesis milestone completion was achieved in March 2023, while Project Genesis kickoff commenced in November 2023.",
+            "bbox": [
+              0.08823529411764706,
+              0.33487138844499686,
+              0.9103416492736417,
+              0.3949839274088542
+            ]
+          },
+          {
+            "text": "5. Operating Expenditure Notes",
+            "bbox": [
+              0.08823529411764706,
+              0.41692976518110797,
+              0.33999501645954605,
+              0.4360131157769097
+            ]
+          },
+          {
+            "text": "Operating expenses for the segment totaled $42.5B for the fiscal year, representing engineering and",
+            "bbox": [
+              0.08823529411764706,
+              0.43744432083284013,
+              0.8855017369089563,
+              0.45652767142864187
+            ]
+          },
+          {
+            "text": "field services investments.",
+            "bbox": [
+              0.08823529411764706,
+              0.4579589150168679,
+              0.2979901631673177,
+              0.47704226561266966
+            ]
+          },
+          {
+            "text": "5. Operating Expenditure Notes Operating expenses for the segment totaled $42.5B for the fiscal year, representing engineering and field services investments.",
+            "bbox": [
+              0.08823529411764706,
+              0.41692976518110797,
+              0.8855017369089563,
+              0.47704226561266966
+            ]
+          },
+          {
+            "text": "Operating Expenditure Notes Operating expenses for the segment totaled $42.5B for the fiscal year, representing engineering and field services investments.",
+            "bbox": [
+              0.08823529411764706,
+              0.41692976518110797,
+              0.8855017369089563,
+              0.47704226561266966
+            ]
+          }
+        ],
+        "evidence_score": 0.15,
+        "issue_ids": [
+          "sem-contra-1-2-d5222c",
+          "math-dist-2-a75ef4",
+          "temp-seq-2-2-d0260e",
+          "unit-scale-2-4-128ea7"
+        ]
+      },
+      {
+        "page": 3,
+        "text_spans": [
+          {
+            "text": "ACME CORPORATION",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.27897384743285336,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "CONSOLIDATED STATEMENT OF OPERATIONS (INCOME STATEMENT)",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.6994184107562296,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "(Amounts in millions of USD)",
+            "bbox": [
+              0.08823529411764706,
+              0.10921102581602155,
+              0.3179411545298458,
+              0.1282943571456755
+            ]
+          },
+          {
+            "text": "ACME CORPORATION CONSOLIDATED STATEMENT OF OPERATIONS (INCOME STATEMENT) (Amounts in millions of USD)",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.6994184107562296,
+              0.1282943571456755
+            ]
+          },
+          {
+            "text": "Revenue Streams Breakdown:",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.3319786919487847,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "Product Sales: $85",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.24009637271656709,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Subscription & Support Services: $35",
+            "bbox": [
+              0.08823529411764706,
+              0.19126932548754144,
+              0.3859362134746477,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "Maintenance & Licensing: $25",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.32901300168504904,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Total Consolidated Revenue: $165",
+            "bbox": [
+              0.08823529411764706,
+              0.232298513855597,
+              0.36497869055255566,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "Revenue Streams Breakdown: Product Sales: $85 Subscription & Support Services: $35 Maintenance & Licensing: $25 Total Consolidated Revenue: $165",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.3859362134746477,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "Operating Expenses Breakdown:",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.35097705616670494,
+              0.2924110335533065
+            ]
+          },
+          {
+            "text": "Research & Development: $42.5",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.3479754130045573,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "Sales & Marketing: $30.0",
+            "bbox": [
+              0.08823529411764706,
+              0.31435681352711686,
+              0.2890391879611545,
+              0.3334401448567708
+            ]
+          },
+          {
+            "text": "General & Administrative: $18.0",
+            "bbox": [
+              0.08823529411764706,
+              0.33487138844499686,
+              0.3419721516129238,
+              0.3539547390407986
+            ]
+          },
+          {
+            "text": "Total Operating Expenses: $90.5",
+            "bbox": [
+              0.08823529411764706,
+              0.3553859826290246,
+              0.350995032615911,
+              0.3744693332248264
+            ]
+          },
+          {
+            "text": "Operating Expenses Breakdown: Research & Development: $42.5 Sales & Marketing: $30.0 General & Administrative: $18.0 Total Operating Expenses: $90.5",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.350995032615911,
+              0.3744693332248264
+            ]
+          },
+          {
+            "text": "Notes to Financial Statements:",
+            "bbox": [
+              0.08823529411764706,
+              0.3964151709970802,
+              0.3329852484410105,
+              0.4154985215928819
+            ]
+          },
+          {
+            "text": "Note 1: Total consolidated revenue implies 14% year-over-year revenue expansion when compared to",
+            "bbox": [
+              0.08823529411764706,
+              0.41692976518110797,
+              0.9004019942938113,
+              0.4360131157769097
+            ]
+          },
+          {
+            "text": "FY2023 baseline revenue of $127M.",
+            "bbox": [
+              0.08823529411764706,
+              0.43744432083284013,
+              0.3779737435135187,
+              0.45652767142864187
+            ]
+          },
+          {
+            "text": "Note 2: To support ongoing capacity buildout, the company secured a $120M senior credit facility and",
+            "bbox": [
+              0.08823529411764706,
+              0.4579589150168679,
+              0.8944527619804432,
+              0.47704226561266966
+            ]
+          },
+          {
+            "text": "issued $120M convertible debt notes due 2029.",
+            "bbox": [
+              0.08823529411764706,
+              0.47847350920089565,
+              0.4659018921696283,
+              0.49755685979669745
+            ]
+          },
+          {
+            "text": "Notes to Financial Statements: Note 1: Total consolidated revenue implies 14% year-over-year revenue expansion when compared to FY2023 baseline revenue of $127M. Note 2: To support ongoing capacity buildout, the company secured a $120M senior credit facility and issued $120M convertible debt notes due 2029.",
+            "bbox": [
+              0.08823529411764706,
+              0.3964151709970802,
+              0.9004019942938113,
+              0.49755685979669745
+            ]
+          },
+          {
+            "text": "Notes to Financial Statements: Note 1: Total consolidated revenue implies 14% year-over-year revenue expansion when compared to FY2023 baseline revenue of $127M.",
+            "bbox": [
+              0.08823529411764706,
+              0.3964151709970802,
+              0.9004019942938113,
+              0.49755685979669745
+            ]
+          },
+          {
+            "text": "Note 2: To support ongoing capacity buildout, the company secured a $120M senior credit facility and issued $120M convertible debt notes due 2029.",
+            "bbox": [
+              0.08823529411764706,
+              0.3964151709970802,
+              0.9004019942938113,
+              0.49755685979669745
+            ]
+          }
+        ],
+        "evidence_score": 0.15,
+        "issue_ids": [
+          "sem-contra-1-3-88dcad",
+          "sem-contra-1-3-06dac8",
+          "math-tbl-3-0-1"
+        ]
+      },
+      {
+        "page": 4,
+        "text_spans": [
+          {
+            "text": "ACME CORPORATION",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.27897384743285336,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "SUPPLEMENTARY SCHEDULES & FOOTNOTE DISCLOSURES",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.6175654292885774,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "ACME CORPORATION SUPPLEMENTARY SCHEDULES & FOOTNOTE DISCLOSURES",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.6175654292885774,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "Schedule A: Operating Expense Detail",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.3949411180284288,
+              0.14880887426511205
+            ]
+          },
+          {
+            "text": "Consolidated operating expenditures aggregated to $42.5M across domestic operations.",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.7905636955710018,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "Schedule A: Operating Expense Detail Consolidated operating expenditures aggregated to $42.5M across domestic operations.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.7905636955710018,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "Schedule B: Milestone Audits",
+            "bbox": [
+              0.08823529411764706,
+              0.19126932548754144,
+              0.32200323366651346,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "Project Genesis completion documentation was finalized following the pilot phase rollout.",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.7935112847222222,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Schedule B: Milestone Audits Project Genesis completion documentation was finalized following the pilot phase rollout.",
+            "bbox": [
+              0.08823529411764706,
+              0.19126932548754144,
+              0.7935112847222222,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Auditor Confirmation:",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.2570457209169475,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "These schedules represent the unadjusted disclosures subject to independent evaluation.",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.8005750568863613,
+              0.2924110335533065
+            ]
+          },
+          {
+            "text": "Auditor Confirmation: These schedules represent the unadjusted disclosures subject to independent evaluation.",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.8005750568863613,
+              0.2924110335533065
+            ]
+          }
+        ],
+        "evidence_score": 0.35,
+        "issue_ids": [
+          "unit-scale-2-4-128ea7"
+        ]
+      }
+    ],
+    "created_at": 1792774362.3457222
+  },
+  "clean_financial_statement": {
+    "doc_id": "clean_financial_statement",
+    "doc_name": "Clean Financial Statement",
+    "total_pages": 3,
+    "summary": {
+      "health_score": 100,
+      "grade": "A+",
+      "total_issues": 0,
+      "critical_count": 0,
+      "warning_count": 0,
+      "info_count": 0,
+      "deterministic_count": 0,
+      "heuristic_count": 0,
+      "needs_review_count": 0,
+      "passed_checks_count": 8,
+      "verified_claims_count": 8,
+      "tables_analyzed": 2,
+      "pages_analyzed": 3,
+      "audit_duration_ms": 2.8
+    },
+    "issues": [],
+    "pages": [
+      {
+        "page": 1,
+        "text_spans": [
+          {
+            "text": "APEX TECHNOLOGIES INC.",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.32495099734636695,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "ANNUAL FINANCIAL DISCLOSURE - FISCAL YEAR 2024",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.559671588972503,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "APEX TECHNOLOGIES INC. ANNUAL FINANCIAL DISCLOSURE - FISCAL YEAR 2024",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.559671588972503,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "Executive Summary:",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.2530375461952359,
+              0.14880887426511205
+            ]
+          },
+          {
+            "text": "Apex Technologies delivered consistent financial performance in fiscal year 2024. Total revenue grew",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.8954052893944036,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "by 15.0% year-over-year, reaching $230M compared to $200M in fiscal 2023.",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.7036061505087061,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Executive Summary: Apex Technologies delivered consistent financial performance in fiscal year 2024. Total revenue grew by 15.0% year-over-year, reaching $230M compared to $200M in fiscal 2023.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8954052893944036,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Executive Summary: Apex Technologies delivered consistent financial performance in fiscal year 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8954052893944036,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Total revenue grew by 15.0% year-over-year, reaching $230M compared to $200M in fiscal 2023.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8954052893944036,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Capital Structure:",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.22708329344107434,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "The company closed the fiscal year with $45M in cash reserves and $10M in revolving credit facility",
+            "bbox": [
+              0.08823529411764706,
+              0.232298513855597,
+              0.8773774789049734,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "debt, maintaining a conservative leverage ratio of 0.2x net debt to EBITDA.",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.6836733849220027,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "Capital Structure: The company closed the fiscal year with $45M in cash reserves and $10M in revolving credit facility debt, maintaining a conservative leverage ratio of 0.2x net debt to EBITDA.",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.8773774789049734,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "All figures in this report are stated in millions of USD unless otherwise noted.",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.6965783811083027,
+              0.3129255506727431
+            ]
+          }
+        ],
+        "evidence_score": 1.0,
+        "issue_ids": []
+      },
+      {
+        "page": 2,
+        "text_spans": [
+          {
+            "text": "APEX TECHNOLOGIES INC.",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.32495099734636695,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "REVENUE BY SEGMENT & PERCENTAGE DISTRIBUTION",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.5756144804113051,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "APEX TECHNOLOGIES INC. REVENUE BY SEGMENT & PERCENTAGE DISTRIBUTION",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.5756144804113051,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "Fiscal 2024 Segment Breakdown:",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.35696234110913244,
+              0.14880887426511205
+            ]
+          },
+          {
+            "text": "- Enterprise Software: $115M (50.0% of total revenue)",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.5187989278556475,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "- Professional Services: $69M (30.0% of total revenue)",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.523777681238511,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "- Consumer Subscriptions: $46M (20.0% of total revenue)",
+            "bbox": [
+              0.08823529411764706,
+              0.19126932548754144,
+              0.5467483420777165,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "Total Consolidated Revenue: $230M (100.0% of total revenue)",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.5867581336326848,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Fiscal 2024 Segment Breakdown: - Enterprise Software: $115M (50.0% of total revenue) - Professional Services: $69M (30.0% of total revenue) - Consumer Subscriptions: $46M (20.0% of total revenue) Total Consolidated Revenue: $230M (100.0% of total revenue)",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.5867581336326848,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Arithmetic Verification:",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.2670212290645425,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "50.0% + 30.0% + 20.0% = 100.0%",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.36352282256082774,
+              0.2924110335533065
+            ]
+          },
+          {
+            "text": "$115M + $69M + $46M = $230M",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.34950318679310916,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "All segment allocations reconcile fully with consolidated statements.",
+            "bbox": [
+              0.08823529411764706,
+              0.31435681352711686,
+              0.626660116357741,
+              0.3334401448567708
+            ]
+          },
+          {
+            "text": "Arithmetic Verification: 50.0% + 30.0% + 20.0% = 100.0% $115M + $69M + $46M = $230M All segment allocations reconcile fully with consolidated statements.",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.626660116357741,
+              0.3334401448567708
+            ]
+          }
+        ],
+        "evidence_score": 1.0,
+        "issue_ids": []
+      },
+      {
+        "page": 3,
+        "text_spans": [
+          {
+            "text": "APEX TECHNOLOGIES INC.",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.32495099734636695,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "STATEMENT OF OPERATIONS",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.34989869360830267,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "(in millions of USD)",
+            "bbox": [
+              0.08823529411764706,
+              0.10921102581602155,
+              0.24201960345498877,
+              0.1282943571456755
+            ]
+          },
+          {
+            "text": "APEX TECHNOLOGIES INC. STATEMENT OF OPERATIONS (in millions of USD)",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.34989869360830267,
+              0.1282943571456755
+            ]
+          },
+          {
+            "text": "STATEMENT OF OPERATIONS (in millions of USD)",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.34989869360830267,
+              0.1282943571456755
+            ]
+          },
+          {
+            "text": "Revenue:",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.16516337675206802,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "Software Licenses: $115",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.2850489896886489,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Support & Maintenance: $69",
+            "bbox": [
+              0.08823529411764706,
+              0.19126932548754144,
+              0.3160359002406301,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "Consulting Engagements: $46",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.32901300168504904,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Total Revenue: $230",
+            "bbox": [
+              0.08823529411764706,
+              0.232298513855597,
+              0.25508656221277576,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "Revenue: Software Licenses: $115 Support & Maintenance: $69 Consulting Engagements: $46 Total Revenue: $230",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.32901300168504904,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "Costs and Expenses:",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.2580702289257174,
+              0.2924110335533065
+            ]
+          },
+          {
+            "text": "Cost of Revenue: $70",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.26207837871476714,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "Research & Development: $50",
+            "bbox": [
+              0.08823529411764706,
+              0.31435681352711686,
+              0.33298522350834864,
+              0.3334401448567708
+            ]
+          },
+          {
+            "text": "Sales & Marketing: $60",
+            "bbox": [
+              0.08823529411764706,
+              0.33487138844499686,
+              0.27404899846494585,
+              0.3539547390407986
+            ]
+          },
+          {
+            "text": "General & Administrative: $20",
+            "bbox": [
+              0.08823529411764706,
+              0.3553859826290246,
+              0.32698196211671515,
+              0.3744693332248264
+            ]
+          },
+          {
+            "text": "Total Costs and Expenses: $200",
+            "bbox": [
+              0.08823529411764706,
+              0.3759005768130524,
+              0.34799341438642517,
+              0.3949839274088542
+            ]
+          },
+          {
+            "text": "Costs and Expenses: Cost of Revenue: $70 Research & Development: $50 Sales & Marketing: $60 General & Administrative: $20 Total Costs and Expenses: $200",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.34799341438642517,
+              0.3949839274088542
+            ]
+          },
+          {
+            "text": "Operating Income: $30",
+            "bbox": [
+              0.08823529411764706,
+              0.41692976518110797,
+              0.2710653068193423,
+              0.4360131157769097
+            ]
+          },
+          {
+            "text": "Net Income: $24",
+            "bbox": [
+              0.08823529411764706,
+              0.43744432083284013,
+              0.2201094533882889,
+              0.45652767142864187
+            ]
+          },
+          {
+            "text": "Operating Income: $30 Net Income: $24",
+            "bbox": [
+              0.08823529411764706,
+              0.41692976518110797,
+              0.2710653068193423,
+              0.45652767142864187
+            ]
+          }
+        ],
+        "evidence_score": 1.0,
+        "issue_ids": []
+      }
+    ],
+    "created_at": 1792774362.648716
+  },
+  "vertex_energy_audit": {
+    "doc_id": "vertex_energy_audit",
+    "doc_name": "Vertex Energy Audit",
+    "total_pages": 2,
+    "summary": {
+      "health_score": 70,
+      "grade": "C",
+      "total_issues": 2,
+      "critical_count": 2,
+      "warning_count": 0,
+      "info_count": 0,
+      "deterministic_count": 2,
+      "heuristic_count": 0,
+      "needs_review_count": 0,
+      "passed_checks_count": 5,
+      "verified_claims_count": 5,
+      "tables_analyzed": 1,
+      "pages_analyzed": 2,
+      "audit_duration_ms": 1.9
+    },
+    "issues": [
+      {
+        "id": "math-growth-1-348f75",
+        "title": "Inaccurate Percentage Calculation: Stated 25.0% vs Actual 50.0%",
+        "description": "Text claims an increase of 25.0% from 80.0 to 120.0, but mathematical growth is 50.0%. Discrepancy of 25.0 percentage points.",
+        "category": "math_discrepancy",
+        "severity": "critical",
+        "confidence": 0.98,
+        "check_type": "deterministic",
+        "status": "confirmed",
+        "explanation": "Deterministic rate calculation: ((120.0 - 80.0) / 80.0) * 100% = 50.00%; stated growth = 25.00%; variance = 25.00 percentage points.",
+        "primary_anchor": {
+          "page": 1,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.1297255429354581,
+            "x1": 0.9064053803487541,
+            "y1": 0.1898380626331676
+          },
+          "text": "increased by 25% from 80 to 120 ",
+          "label": "Percentage Claim"
+        },
+        "secondary_anchor": null,
+        "expected_value": "50.0%",
+        "actual_value": "25.0%",
+        "delta": "25.0%",
+        "suggested_fix": "Correct stated growth rate from 25.0% to 50.0%.",
+        "created_at": 1792774362.852829
+      },
+      {
+        "id": "temp-seq-1-1-ed5021",
+        "title": "Temporal Anomaly: 'Project Titan' Completion Precedes Inception Date",
+        "description": "Completion of Project Titan is reported in February 2024, yet project kickoff is stated as occurring later in August 2024.",
+        "category": "temporal_inversion",
+        "severity": "critical",
+        "confidence": 0.96,
+        "check_type": "deterministic",
+        "status": "confirmed",
+        "explanation": "Deterministic timeline comparison: evaluated milestone sequence for 'Project Titan'. Completion is dated February 2024 (timestamp: 202402), which chronologically precedes kickoff/inception date August 2024 (timestamp: 202408).",
+        "primary_anchor": {
+          "page": 1,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.2117839196715692,
+            "x1": 0.8773954304215176,
+            "y1": 0.2718964393692787
+          },
+          "text": "2. Infrastructure Milestones Under our modern grid plan, Project Titan completion was achieved in February 2024, while Project Titan kickoff was initiated in August 2024 across regional facilities.",
+          "label": "Kickoff Anchor (August 2024)"
+        },
+        "secondary_anchor": {
+          "page": 1,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.232298513855597,
+            "x1": 0.8773954304215176,
+            "y1": 0.251381845185251
+          },
+          "text": "Under our modern grid plan, Project Titan completion was achieved in February 2024, while Project",
+          "label": "Completion Anchor (February 2024)"
+        },
+        "expected_value": "Initiation date must precede February 2024",
+        "actual_value": "Kickoff: August 2024 vs Completion: February 2024",
+        "delta": "August 2024 > February 2024",
+        "suggested_fix": "Align chronological dates so kickoff precedes completion.",
+        "created_at": 1792774362.8532212
+      }
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "text_spans": [
+          {
+            "text": "VERTEX ENERGY CORP",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.29797223658343547,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "OPERATIONAL AUDIT & FINANCIAL UPDATE - FY2024",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.547683067571104,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "VERTEX ENERGY CORP OPERATIONAL AUDIT & FINANCIAL UPDATE - FY2024",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.547683067571104,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "1. Performance Highlights",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.29500652138703787,
+              0.14880887426511205
+            ]
+          },
+          {
+            "text": "During fiscal 2024, Vertex Energy expanded power distribution operations. Operating margin increased",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.9064053803487541,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "by 25% from 80 to 120 in our primary grid segment, reflecting efficiency improvements.",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.7784852171255872,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "1. Performance Highlights During fiscal 2024, Vertex Energy expanded power distribution operations. Operating margin increased by 25% from 80 to 120 in our primary grid segment, reflecting efficiency improvements.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.9064053803487541,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Performance Highlights During fiscal 2024, Vertex Energy expanded power distribution operations.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.9064053803487541,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Operating margin increased by 25% from 80 to 120 in our primary grid segment, reflecting efficiency improvements.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.9064053803487541,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "2. Infrastructure Milestones",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.3049999561185151,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Under our modern grid plan, Project Titan completion was achieved in February 2024, while Project",
+            "bbox": [
+              0.08823529411764706,
+              0.232298513855597,
+              0.8773954304215176,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "Titan kickoff was initiated in August 2024 across regional facilities.",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.613682865317351,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "2. Infrastructure Milestones Under our modern grid plan, Project Titan completion was achieved in February 2024, while Project Titan kickoff was initiated in August 2024 across regional facilities.",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.8773954304215176,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "Infrastructure Milestones Under our modern grid plan, Project Titan completion was achieved in February 2024, while Project Titan kickoff was initiated in August 2024 across regional facilities.",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.8773954304215176,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "3. Capital Position",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.2330865797653697,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "Vertex Energy holds $35M in term debt and $15M in cash, in compliance with all banking covenants",
+            "bbox": [
+              0.08823529411764706,
+              0.31435681352711686,
+              0.8814395081763174,
+              0.3334401448567708
+            ]
+          },
+          {
+            "text": "throughout fiscal 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.33487138844499686,
+              0.2700767517089844,
+              0.3539547390407986
+            ]
+          },
+          {
+            "text": "3. Capital Position Vertex Energy holds $35M in term debt and $15M in cash, in compliance with all banking covenants throughout fiscal 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.8814395081763174,
+              0.3539547390407986
+            ]
+          },
+          {
+            "text": "Capital Position Vertex Energy holds $35M in term debt and $15M in cash, in compliance with all banking covenants throughout fiscal 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.8814395081763174,
+              0.3539547390407986
+            ]
+          }
+        ],
+        "evidence_score": 0.25,
+        "issue_ids": [
+          "math-growth-1-348f75",
+          "temp-seq-1-1-ed5021"
+        ]
+      },
+      {
+        "page": 2,
+        "text_spans": [
+          {
+            "text": "VERTEX ENERGY CORP",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.29797223658343547,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "COST SCHEDULE & OPERATIONAL OUTLAYS",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.4797598645578023,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "(in millions of USD)",
+            "bbox": [
+              0.08823529411764706,
+              0.10921102581602155,
+              0.24201960345498877,
+              0.1282943571456755
+            ]
+          },
+          {
+            "text": "VERTEX ENERGY CORP COST SCHEDULE & OPERATIONAL OUTLAYS (in millions of USD)",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.4797598645578023,
+              0.1282943571456755
+            ]
+          },
+          {
+            "text": "Operating Costs Breakdown:",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.31799503401214,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "Fuel and Energy Transmission: $50",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.37193455415613513,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Plant Labor and Engineering: $30",
+            "bbox": [
+              0.08823529411764706,
+              0.19126932548754144,
+              0.35600973889718646,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "Maintenance and Operations: $20",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.3589933806774663,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Total Operating Costs: $100",
+            "bbox": [
+              0.08823529411764706,
+              0.232298513855597,
+              0.31301628062927644,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "Operating Costs Breakdown: Fuel and Energy Transmission: $50 Plant Labor and Engineering: $30 Maintenance and Operations: $20 Total Operating Costs: $100",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.37193455415613513,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "Notes:",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.1401797275917203,
+              0.2924110335533065
+            ]
+          },
+          {
+            "text": "All reported cost lines reconcile mathematically with the total operating expenditure.",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.7515423843284058,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "Notes: All reported cost lines reconcile mathematically with the total operating expenditure.",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.7515423843284058,
+              0.3129255506727431
+            ]
+          }
+        ],
+        "evidence_score": 1.0,
+        "issue_ids": []
+      }
+    ],
+    "created_at": 1792774362.854648
+  },
+  "nova_clean_quarterly": {
+    "doc_id": "nova_clean_quarterly",
+    "doc_name": "Nova Clean Quarterly",
+    "total_pages": 1,
+    "summary": {
+      "health_score": 100,
+      "grade": "A+",
+      "total_issues": 0,
+      "critical_count": 0,
+      "warning_count": 0,
+      "info_count": 0,
+      "deterministic_count": 0,
+      "heuristic_count": 0,
+      "needs_review_count": 0,
+      "passed_checks_count": 2,
+      "verified_claims_count": 2,
+      "tables_analyzed": 0,
+      "pages_analyzed": 1,
+      "audit_duration_ms": 1.9
+    },
+    "issues": [],
+    "pages": [
+      {
+        "page": 1,
+        "text_spans": [
+          {
+            "text": "NOVA HEALTH SYSTEMS",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.30597058464499083,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "QUARTERLY FINANCIAL DISCLOSURE - Q4 2024",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.5037370070912479,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "NOVA HEALTH SYSTEMS QUARTERLY FINANCIAL DISCLOSURE - Q4 2024",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.5037370070912479,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "Executive Commentary:",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.27900977539860344,
+              0.14880887426511205
+            ]
+          },
+          {
+            "text": "Nova Health Systems maintained steady clinical and operational momentum throughout the quarter.",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.8824281380846609,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "Operating revenue increased by 20% from 50 to 60 during the period ended December 31, 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.8585229013480392,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Executive Commentary: Nova Health Systems maintained steady clinical and operational momentum throughout the quarter. Operating revenue increased by 20% from 50 to 60 during the period ended December 31, 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8824281380846609,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Executive Commentary: Nova Health Systems maintained steady clinical and operational momentum throughout the quarter.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8824281380846609,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "Departmental Revenue Breakdown:",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.3729411106483609,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "- Inpatient Services: 60% of total revenue",
+            "bbox": [
+              0.08823529411764706,
+              0.232298513855597,
+              0.416923099093967,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "- Outpatient Clinics: 40% of total revenue",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.41491006090750104,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "Total Allocation: 100% of revenue accounted for.",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.47587745018254696,
+              0.2924110335533065
+            ]
+          },
+          {
+            "text": "Departmental Revenue Breakdown: - Inpatient Services: 60% of total revenue - Outpatient Clinics: 40% of total revenue Total Allocation: 100% of revenue accounted for.",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.47587745018254696,
+              0.2924110335533065
+            ]
+          },
+          {
+            "text": "Capital Structure:",
+            "bbox": [
+              0.08823529411764706,
+              0.31435681352711686,
+              0.22708329344107434,
+              0.3334401448567708
+            ]
+          },
+          {
+            "text": "The organization maintained $25M in operational liquidity and zero debt obligations as of December 31,",
+            "bbox": [
+              0.08823529411764706,
+              0.33487138844499686,
+              0.9104314068563624,
+              0.3539547390407986
+            ]
+          },
+          {
+            "text": "2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.3553859826290246,
+              0.13320587507260392,
+              0.3744693332248264
+            ]
+          },
+          {
+            "text": "Capital Structure: The organization maintained $25M in operational liquidity and zero debt obligations as of December 31, 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.31435681352711686,
+              0.9104314068563624,
+              0.3744693332248264
+            ]
+          }
+        ],
+        "evidence_score": 1.0,
+        "issue_ids": []
+      }
+    ],
+    "created_at": 1792774362.963264
+  },
+  "solaris_edge_cases": {
+    "doc_id": "solaris_edge_cases",
+    "doc_name": "Solaris Edge Cases",
+    "total_pages": 2,
+    "summary": {
+      "health_score": 70,
+      "grade": "C",
+      "total_issues": 2,
+      "critical_count": 2,
+      "warning_count": 0,
+      "info_count": 0,
+      "deterministic_count": 2,
+      "heuristic_count": 0,
+      "needs_review_count": 0,
+      "passed_checks_count": 5,
+      "verified_claims_count": 5,
+      "tables_analyzed": 1,
+      "pages_analyzed": 2,
+      "audit_duration_ms": 3.1
+    },
+    "issues": [
+      {
+        "id": "math-growth-1-00db7d",
+        "title": "Inaccurate Percentage Calculation: Stated 40.0% vs Actual 20.0%",
+        "description": "Text claims an increase of 40.0% from 100.0 to 120.0, but mathematical growth is 20.0%. Discrepancy of 20.0 percentage points.",
+        "category": "math_discrepancy",
+        "severity": "critical",
+        "confidence": 0.98,
+        "check_type": "deterministic",
+        "status": "confirmed",
+        "explanation": "Deterministic rate calculation: ((120.0 - 100.0) / 100.0) * 100% = 20.00%; stated growth = 40.00%; variance = 20.00 percentage points.",
+        "primary_anchor": {
+          "page": 1,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.41692976518110797,
+            "x1": 0.7736502753363715,
+            "y1": 0.4360131157769097
+          },
+          "text": "expanded by 40% from 100 to 120 ",
+          "label": "Percentage Claim"
+        },
+        "secondary_anchor": null,
+        "expected_value": "20.0%",
+        "actual_value": "40.0%",
+        "delta": "20.0%",
+        "suggested_fix": "Correct stated growth rate from 40.0% to 20.0%.",
+        "created_at": 1792774363.123771
+      },
+      {
+        "id": "temp-seq-2-2-695a1a",
+        "title": "Temporal Anomaly: 'Project Helios' Completion Precedes Inception Date",
+        "description": "Completion of Project Helios is reported in January 2024, yet project kickoff is stated as occurring later in August 2024.",
+        "category": "temporal_inversion",
+        "severity": "critical",
+        "confidence": 0.96,
+        "check_type": "deterministic",
+        "status": "confirmed",
+        "explanation": "Deterministic timeline comparison: evaluated milestone sequence for 'Project Helios'. Completion is dated January 2024 (timestamp: 202401), which chronologically precedes kickoff/inception date August 2024 (timestamp: 202408).",
+        "primary_anchor": {
+          "page": 2,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.17075473130351365,
+            "x1": 0.5008251215118209,
+            "y1": 0.1898380626331676
+          },
+          "text": "Project Helios charter kickoff began in August 2024.",
+          "label": "Kickoff Anchor (August 2024)"
+        },
+        "secondary_anchor": {
+          "page": 2,
+          "bbox": {
+            "x0": 0.08823529411764706,
+            "y0": 0.15024013711948586,
+            "x1": 0.8593675202014399,
+            "y1": 0.16932346844913984
+          },
+          "text": "Under corporate restructuring, Project Helios commissioning was finalized in January 2024, while",
+          "label": "Completion Anchor (January 2024)"
+        },
+        "expected_value": "Initiation date must precede January 2024",
+        "actual_value": "Kickoff: August 2024 vs Completion: January 2024",
+        "delta": "August 2024 > January 2024",
+        "suggested_fix": "Align chronological dates so kickoff precedes completion.",
+        "created_at": 1792774363.124314
+      }
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "text_spans": [
+          {
+            "text": "SOLARIS DYNAMICS INC",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.3019624099232792,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "FINANCIAL SUMMARY & VARIANCE DISCLOSURES - FY2024",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.6055948095383987,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "SOLARIS DYNAMICS INC FINANCIAL SUMMARY & VARIANCE DISCLOSURES - FY2024",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.6055948095383987,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "1. Operational Outlays & Negative Operating Income",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.5078169380138123,
+              0.14880887426511205
+            ]
+          },
+          {
+            "text": "During fiscal year 2024, Solaris Dynamics navigated severe supply chain inflation.",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.7395358615451388,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "Operating revenue reached $150M against operating expenses of $180M, yielding an operating deficit",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.8994853699129391,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "of -$30M.",
+            "bbox": [
+              0.08823529411764706,
+              0.19126932548754144,
+              0.16415685765883503,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "1. Operational Outlays & Negative Operating Income During fiscal year 2024, Solaris Dynamics navigated severe supply chain inflation. Operating revenue reached $150M against operating expenses of $180M, yielding an operating deficit of -$30M.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8994853699129391,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "Operational Outlays & Negative Operating Income During fiscal year 2024, Solaris Dynamics navigated severe supply chain inflation.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8994853699129391,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "Operating revenue reached $150M against operating expenses of $180M, yielding an operating deficit of -$30M.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8994853699129391,
+              0.2103526568171954
+            ]
+          },
+          {
+            "text": "Table 1: Regional Operational Income (in millions)",
+            "bbox": [
+              0.08823529411764706,
+              0.232298513855597,
+              0.486787384631587,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "- Americas Region: $40",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.27602610868566174,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "- EMEA Region: -$25",
+            "bbox": [
+              0.08823529411764706,
+              0.27332770222365255,
+              0.2580522524765114,
+              0.2924110335533065
+            ]
+          },
+          {
+            "text": "- APAC Region: $15",
+            "bbox": [
+              0.08823529411764706,
+              0.2938422193430891,
+              0.2500718559315002,
+              0.3129255506727431
+            ]
+          },
+          {
+            "text": "Total Regional Operational Income: $30",
+            "bbox": [
+              0.08823529411764706,
+              0.31435681352711686,
+              0.405923107870264,
+              0.3334401448567708
+            ]
+          },
+          {
+            "text": "Table 1: Regional Operational Income (in millions) - Americas Region: $40 - EMEA Region: -$25 - APAC Region: $15 Total Regional Operational Income: $30",
+            "bbox": [
+              0.08823529411764706,
+              0.232298513855597,
+              0.486787384631587,
+              0.3334401448567708
+            ]
+          },
+          {
+            "text": "Note: The stated total of $30M reconciles with 40 + (-25) + 15 = 30.",
+            "bbox": [
+              0.08823529411764706,
+              0.3553859826290246,
+              0.6222386079676011,
+              0.3744693332248264
+            ]
+          },
+          {
+            "text": "2. Injected Rate Discrepancy",
+            "bbox": [
+              0.08823529411764706,
+              0.3964151709970802,
+              0.3179950589448019,
+              0.4154985215928819
+            ]
+          },
+          {
+            "text": "Stated operating revenue expanded by 40% from 100 to 120 during the annual period.",
+            "bbox": [
+              0.08823529411764706,
+              0.41692976518110797,
+              0.7736502753363715,
+              0.4360131157769097
+            ]
+          },
+          {
+            "text": "2. Injected Rate Discrepancy Stated operating revenue expanded by 40% from 100 to 120 during the annual period.",
+            "bbox": [
+              0.08823529411764706,
+              0.3964151709970802,
+              0.7736502753363715,
+              0.4360131157769097
+            ]
+          },
+          {
+            "text": "Injected Rate Discrepancy Stated operating revenue expanded by 40% from 100 to 120 during the annual period.",
+            "bbox": [
+              0.08823529411764706,
+              0.3964151709970802,
+              0.7736502753363715,
+              0.4360131157769097
+            ]
+          }
+        ],
+        "evidence_score": 0.35,
+        "issue_ids": [
+          "math-growth-1-00db7d"
+        ]
+      },
+      {
+        "page": 2,
+        "text_spans": [
+          {
+            "text": "SOLARIS DYNAMICS INC",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.3019624099232792,
+              0.08726516877761994
+            ]
+          },
+          {
+            "text": "PROJECT CHRONOLOGY & FOOTNOTES",
+            "bbox": [
+              0.08823529411764706,
+              0.08869643163199377,
+              0.44077445634829454,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "SOLARIS DYNAMICS INC PROJECT CHRONOLOGY & FOOTNOTES",
+            "bbox": [
+              0.08823529411764706,
+              0.06818183263142903,
+              0.44077445634829454,
+              0.10777976296164772
+            ]
+          },
+          {
+            "text": "3. R&D Initiative Timeline",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.2899917901731005,
+              0.14880887426511205
+            ]
+          },
+          {
+            "text": "Under corporate restructuring, Project Helios commissioning was finalized in January 2024, while",
+            "bbox": [
+              0.08823529411764706,
+              0.15024013711948586,
+              0.8593675202014399,
+              0.16932346844913984
+            ]
+          },
+          {
+            "text": "Project Helios charter kickoff began in August 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.17075473130351365,
+              0.5008251215118209,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "3. R&D Initiative Timeline Under corporate restructuring, Project Helios commissioning was finalized in January 2024, while Project Helios charter kickoff began in August 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8593675202014399,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "R&D Initiative Timeline Under corporate restructuring, Project Helios commissioning was finalized in January 2024, while Project Helios charter kickoff began in August 2024.",
+            "bbox": [
+              0.08823529411764706,
+              0.1297255429354581,
+              0.8593675202014399,
+              0.1898380626331676
+            ]
+          },
+          {
+            "text": "4. Supplementary Footnote Disclosures",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.4029035131915722,
+              0.23086725100122316
+            ]
+          },
+          {
+            "text": "Cash and cash equivalents totaled $85M at year-end.",
+            "bbox": [
+              0.08823529411764706,
+              0.232298513855597,
+              0.5138381758546517,
+              0.251381845185251
+            ]
+          },
+          {
+            "text": "Management anticipates moderate seasonal revenue fluctuations in future quarters.",
+            "bbox": [
+              0.08823529411764706,
+              0.25281310803962476,
+              0.7535914502112694,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "4. Supplementary Footnote Disclosures Cash and cash equivalents totaled $85M at year-end. Management anticipates moderate seasonal revenue fluctuations in future quarters.",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.7535914502112694,
+              0.2718964393692787
+            ]
+          },
+          {
+            "text": "Supplementary Footnote Disclosures Cash and cash equivalents totaled $85M at year-end.",
+            "bbox": [
+              0.08823529411764706,
+              0.2117839196715692,
+              0.7535914502112694,
+              0.2718964393692787
+            ]
+          }
+        ],
+        "evidence_score": 0.35,
+        "issue_ids": [
+          "temp-seq-2-2-695a1a"
+        ]
+      }
+    ],
+    "created_at": 1792774363.1267111
+  }
+}

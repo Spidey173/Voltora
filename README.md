@@ -3,6 +3,19 @@
 > **An automated document review tool designed to assist human analysts in detecting arithmetic inconsistencies, conflicting cross-page narrative disclosures, milestone timeline inversions, and unit denomination scale errors.**  
 > Built as a portfolio project showcasing coordinate-anchored PDF parsing, deterministic and heuristic rule pipelines, and evidence-grounded document inspection.
 
+[![Deploy Demo to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FSpidey173%2FVoltora&root-directory=demo)
+
+---
+
+## ⚡ Live Portfolio Demo (Vercel-Ready)
+
+Want to see Voltora in action without running Python locally?  
+Explore the self-contained **[`demo/`](./demo)** folder:
+- **Instant Vercel Hosting:** Pre-configured with zero serverless cold-starts, zero API costs, and instant edge CDN delivery.
+- **5 Pre-Audited Sample Datasets:** Includes Acme Corp FY24 (8 multi-dimensional discrepancies), Apex Technologies (Clean Baseline, Grade A+), Vertex Energy, Nova Dynamics, and Solaris AI.
+- **Full Interactive Feature Set:** Dual coordinate jumper pins, arithmetic derivation proofs, Notion AI Copilot drawer, and 12/12 synthetic regression results modal.
+- **See [`demo/README.md`](./demo/README.md)** for 1-click Vercel deployment instructions.
+
 ---
 
 ## 📋 What This Project Does / Does Not Do
